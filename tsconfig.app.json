@@ -3,7 +3,11 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "types": ["vite/client"],
-
+    "baseUrl": ".", //ts7.0已弃用
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "ignoreDeprecations": "6.0", //官方提示错误可以用这个忽略警告
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
