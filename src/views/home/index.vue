@@ -114,7 +114,6 @@
         <h3 class="provider-card-sub-title">供给方入驻</h3>
         
         <div class="provider-timeline-wrapper">
-          
           <div class="timeline-node-item node-1">
             <span class="item-blue-dot"></span>
             <div class="dashed-segment line-1"></div>
@@ -149,7 +148,6 @@
               <p>平台流量扶持，快速获取客户</p>
             </div>
           </div>
-
         </div>
       </div>
       
@@ -168,34 +166,90 @@
       <h2 class="section-title">政策专区</h2>
       <p class="section-desc">了解最新的算力政策与行业规范，获取优惠补贴信息</p>
     </div>
+    
     <div class="policy-content">
-      <div class="policy-main">
-        <div class="policy-image">
-          <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=GPU%20chip%20technology%20blue%20futuristic%20circuit%20board%20background&width=600&height=300" alt="政策配图">
+      <div class="policy-hover-card policy-main-hero" @click="handlePolicyLink(1)">
+        <div class="policy-image-box">
+          <img 
+            src="@/views/home/images/位图.png" 
+            alt="政策主图" 
+            class="hero-img"
+          />
         </div>
-        <h3 class="policy-title">关于组织开展2025年人工智能券（算力券）兑付申报的通知</h3>
-        <p class="policy-desc">各有关单位：根据国家相关通知要求，现面向全省开展2025年国家人工智能服务（算力券）兑付申报工作。现将有关事项通知如下：一、人工智能券（算力券）是国家使用超长期特别国债资金，试点推动形成人...</p>
-        <div class="policy-meta">
-          <span class="meta-item">发布单位：浙江省发展和改革委员会</span>
-          <span class="meta-item">2025-05-16</span>
+        
+        <div class="hero-card-body">
+          <h3 class="policy-card-title">关于组织开展2025年人工智能券（算力券）兑付申报的通知</h3>
+          <p class="policy-desc">各有关单位：根据国家相关通知要求，现面向全省开展2025年国家人工智能服务（算力券）兑付申报工作。现将有关事项通知如下：一、人工智能券（算力券）是国家使用超长期特别国债资金，试点推动形成人...</p>
+          <div class="policy-meta-row">
+            <span class="meta-source">发布单位：浙江省发展和改革委员会</span>
+            <span class="meta-date">2025-05-16</span>
+          </div>
         </div>
       </div>
-      <div class="policy-list">
-        <el-card v-for="policy in policies" :key="policy.id" class="policy-card">
-          <h4 class="policy-item-title">{{ policy.title }}</h4>
-          <p class="policy-item-desc">{{ policy.desc }}</p>
-          <div class="policy-item-meta">
-            <span class="meta-item">发布单位：{{ policy.source }}</span>
-            <span class="meta-item">{{ policy.date }}</span>
+
+      <div class="policy-grid-box">
+        <div 
+          v-for="policy in policies" 
+          :key="policy.id" 
+          class="policy-hover-card policy-sub-grid-item"
+          @click="handlePolicyLink(policy.id)"
+        >
+          <h4 class="policy-card-title">{{ policy.title }}</h4>
+          <p class="policy-grid-desc">{{ policy.desc }}</p>
+          
+          <div class="grid-item-footer">
+            <div class="policy-meta-row">
+              <span class="meta-source">发布单位：{{ policy.source }}</span>
+              <span class="meta-date">{{ policy.date }}</span>
+            </div>
+            <span class="details-link-arrow">了解详情 →</span>
           </div>
-          <span class="policy-link">了解详情 →</span>
-        </el-card>
+        </div>
       </div>
     </div>
+    
     <div class="view-all-link">
       <span>查看更多</span>
     </div>
   </div>
+
+  <footer class="global-platform-footer">
+    <div class="footer-main-content">
+      
+      <div class="footer-column column-left">
+        <h2 class="footer-brand-title">算力调度运营平台</h2>
+      </div>
+
+      <div class="footer-column column-center">
+        <h3 class="footer-column-title">基本信息</h3>
+        <ul class="footer-info-list">
+          <li>
+            <span class="info-label">联系邮箱：</span>
+            <span class="info-value">service@cs-xxxxxxxxxx-platform.com</span>
+          </li>
+          <li>
+            <span class="info-label">联系地址：</span>
+            <span class="info-value">XX省XX市XX区智慧科创园区A栋商务中心</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-column column-right">
+        <h3 class="footer-column-title">联系我们</h3>
+        <el-button type="primary" class="footer-consult-btn">
+          立即咨询
+        </el-button>
+      </div>
+
+    </div>
+
+    <div class="footer-divider-line"></div>
+
+    <div class="footer-bottom-bar">
+      <p class="icp-record-text">ICP备案编号：浙ICP备2024132127-3号</p>
+      <p class="copyright-text">国家人工智能应用中试基地(医疗)-浙江版权所有 技术支持:国家人工智能应用中试基地(医疗)-浙江</p>
+    </div>
+  </footer>
 </template>
 
 <script setup lang="ts">
@@ -244,12 +298,26 @@ const trackTransform = computed(() => {
   }
 })
 
-// 供给方入驻：相交检测
+// 供给方入驻检测
 const providerSectionRef = ref<HTMLElement | null>(null)
 const isProviderVisible = ref(false)
 let providerObserver: IntersectionObserver | null = null
 
+// 🚀 核心强效动态吸顶机制：挂载时强制抓取顶层 Header 节点并强行注入 CSS
 onMounted(() => {
+  // 兼容抓取大厂通用的顶置布局容器（el-header 或带有头部标识的 div）
+  const globalHeader = document.querySelector('.el-header') || document.querySelector('header') || document.querySelector('.header-container')
+  if (globalHeader) {
+    const headerStyle = (globalHeader as HTMLElement).style
+    headerStyle.position = 'fixed'
+    headerStyle.top = '0'
+    headerStyle.left = '0'
+    headerStyle.width = '100%'
+    headerStyle.zIndex = '9999'
+    headerStyle.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.05)'
+    headerStyle.backgroundColor = '#ffffff'
+  }
+
   providerObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -265,9 +333,20 @@ onMounted(() => {
   }
 })
 
+// 🚀 销毁时优雅解除，防止对项目的系统设置产生副作用污染
 onUnmounted(() => {
   if (providerObserver) {
     providerObserver.disconnect()
+  }
+  const globalHeader = document.querySelector('.el-header') || document.querySelector('header') || document.querySelector('.header-container')
+  if (globalHeader) {
+    const headerStyle = (globalHeader as HTMLElement).style
+    headerStyle.position = ''
+    headerStyle.top = ''
+    headerStyle.left = ''
+    headerStyle.width = ''
+    headerStyle.zIndex = ''
+    headerStyle.boxShadow = ''
   }
 })
 
@@ -280,10 +359,14 @@ interface Policy {
 }
 
 const policies = ref<Policy[]>([
-  { id: 1, title: '浙江省人民政府印发关于支持人工智能创新发展...', desc: '为抢占人工智能发展制高点，打造全球人工智能创新发展高地，提出如下措施。一、发展目标 坚持创新驱动...', source: '浙江省人民政府', date: '2025-05-26' },
-  { id: 2, title: '杭州市经济信息局（市数字经济局）关于组织开展...', desc: '各区、县（市）经信局（发改经信局、经济科技局）：根据《杭州市人民政府办公厅关于加快推进人工智能产...', source: '杭州市经济和信息化局', date: '2025-03-28' },
-  { id: 3, title: '杭州市人民政府办公厅关于印发支持人工智能...', desc: '为抢抓人工智能新一轮发展机遇，积极实施"人工智能+"行动，推动杭州人工智能产业全产业链高质量发展...', source: '杭州市人民政府办公厅', date: '2024-07-23' }
+  { id: 2, title: '浙江省人民政府印发关于支持人工智能创新发展...', desc: '为抢占人工智能发展制高点，打造全球人工智能创新发展高地，提出如下措施。一、发展目标 坚持创新驱动发展战略...', source: '浙江省人民政府', date: '2025-05-26' },
+  { id: 3, title: '杭州市经济信息局（市数字经济局）关于组织开展...', desc: '各区、县（市）经信局（发改经信局、经济科技局）：根据《杭州市人民政府办公厅关于加快推进人工智能产业高质量发展的通知》...', source: '杭州市经济和信息化局', date: '2025-03-28' },
+  { id: 4, title: '杭州市人民政府办公厅关于印发支持人工智能...', desc: '为抢抓人工智能新一轮发展机遇，积极实施"人工智能+"行动，推动杭州人工智能产业全产业链高质量发展特此...', source: '杭州市人民政府办公厅', date: '2024-07-23' }
 ])
+
+const handlePolicyLink = (id: number) => {
+  console.log('正在准备去往外部站点，政策条目ID:', id)
+}
 </script>
 
 <style scoped>
@@ -295,6 +378,7 @@ const policies = ref<Policy[]>([
   height: calc(100vh - 60px);
   min-height: 500px;
   overflow: hidden;
+  margin-top: 60px; /* 🚀 为固定的吸顶导航栏精准腾出上外边距高度，防止首屏被吞位 */
 }
 
 .banner-background {
@@ -669,7 +753,7 @@ const policies = ref<Policy[]>([
 }
 
 /* ==========================================================================
-   🚀 模块 4：供给方入驻高保真升级版（完美还原级联交错小球和向下延伸虚线连接）
+   模块 4：供给方入驻区域样式（完好保护）
    ========================================================================== */
 .provider-section {
   padding-top: 0;
@@ -698,7 +782,6 @@ const policies = ref<Policy[]>([
   box-sizing: border-box;
 }
 
-/* 👈 左侧列表聚合面板（固定宽 704px） */
 .provider-left-card {
   width: 704px; 
   padding-top: 36px; 
@@ -717,7 +800,6 @@ const policies = ref<Policy[]>([
   margin-bottom: 24px;
 }
 
-/* 🚀 核心新增：纯流式语义化时间轴跑道，彻底封锁原本的内边距堆叠错位 */
 .provider-timeline-wrapper {
   display: flex;
   flex-direction: column;
@@ -725,7 +807,6 @@ const policies = ref<Policy[]>([
   width: 100%;
 }
 
-/* 🚀 每个时间轴节点的包裹外盒容器 */
 .timeline-node-item {
   position: relative;
   display: flex;
@@ -733,14 +814,13 @@ const policies = ref<Policy[]>([
   width: 100%;
 }
 
-/* 🚀 独立截断虚线段：通过高度延时增长，完美落实“第2个出现后，第1个与第2个用虚线连接”的时序链 */
 .dashed-segment {
   position: absolute;
-  top: 24px; /* 从上一个球心的底部切面开始向下挂载 */
-  left: 3.5px; /* 绝对对齐小球几何中心线（7px/2） */
+  top: 24px; 
+  left: 3.5px; 
   width: 1px;
-  height: 0; /* 🚀 默认隐藏：高度为0 */
-  border-left: 1px dashed #1677FF; /* 采用高精准品牌蓝色虚线 */
+  height: 0; 
+  border-left: 1px dashed #1677FF; 
   opacity: 0;
   z-index: 1;
   transform-origin: top center;
@@ -749,140 +829,56 @@ const policies = ref<Policy[]>([
   will-change: height, opacity;
 }
 
-/* 🚀 精巧计算的小球：默认透明且缩放为 0，等待级联命令进行弹出 */
 .item-blue-dot {
   position: relative;
   width: 7px;
   height: 7px;
   background-color: #1677FF;
   border-radius: 50%;
-  margin-top: 21px; /* 完美居中对齐首行 24px 标题的轴线 */
+  margin-top: 21px; 
   flex-shrink: 0;
   z-index: 5;
   opacity: 0;
-  transform: scale(0); /* 🚀 默认缩放为0，实现极具质感的弹性弹出效果 */
+  transform: scale(0); 
   transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
               transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: opacity, transform;
 }
 
-/* 🚀 文本条目骨架：默认透明，且带有向右 24px 的微调滑行滑轨，等待与小球同步出现 */
 .item-text-content {
   flex: 1;
   padding-top: 14px;
   padding-bottom: 14px;
-  padding-left: 24px; /* 精确留出距离左侧时间轴的间隙呼吸 */
+  padding-left: 24px; 
   border-bottom: 1px dashed #f0f3f6;
   opacity: 0;
-  transform: translate3d(24px, 0, 0); /* 🚀 向右偏移，等小球弹出时带着一起滑出 */
+  transform: translate3d(24px, 0, 0); 
   transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
               transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: opacity, transform;
 }
 
-/* 🚀 最后一个节点的下划线处理，防止多出一截虚线线段 */
 .timeline-node-item:last-child .item-text-content {
   border-bottom: none;
 }
 
-/* ==========================================================================
-   🚀 时间轴级联时序控制（严格对齐用户：弹出时，球带内容出现；随后虚线向下增长连接）
-   ========================================================================== */
+.animate-start .node-1 .item-blue-dot { opacity: 1; transform: scale(1); transition-delay: 0.1s; }
+.animate-start .node-1 .item-text-content { opacity: 1; transform: translate3d(0, 0, 0); transition-delay: 0.15s; }
+.animate-start .node-1 .line-1 { opacity: 1; height: 64px; transition-delay: 0.45s; }
+.animate-start .node-2 .item-blue-dot { opacity: 1; transform: scale(1); transition-delay: 0.75s; }
+.animate-start .node-2 .item-text-content { opacity: 1; transform: translate3d(0, 0, 0); transition-delay: 0.8s; }
+.animate-start .node-2 .line-2 { opacity: 1; height: 64px; transition-delay: 1.1s; }
+.animate-start .node-3 .item-blue-dot { opacity: 1; transform: scale(1); transition-delay: 1.4s; }
+.animate-start .node-3 .item-text-content { opacity: 1; transform: translate3d(0, 0, 0); transition-delay: 1.45s; }
+.animate-start .node-3 .line-3 { opacity: 1; height: 64px; transition-delay: 1.75s; }
+.animate-start .node-4 .item-blue-dot { opacity: 1; transform: scale(1); transition-delay: 2.05s; }
+.animate-start .node-4 .item-text-content { opacity: 1; transform: translate3d(0, 0, 0); transition-delay: 2.1s; }
 
-/* --- 阶段一：第一组节点闪亮登场 --- */
-.animate-start .node-1 .item-blue-dot {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 0.1s; /* 🚀 1. 节点一小球弹出 */
-}
-.animate-start .node-1 .item-text-content {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.15s; /* 🚀 2. 节点一内容随后带着出现 */
-}
+.item-text-content h4 { margin-top: 0; margin-bottom: 6px; color: #1a1a1a; font-size: 1.1rem; font-weight: 600; }
+.item-text-content p { margin: 0; color: #666666; font-size: 0.95rem; line-height: 1.5; }
 
-/* --- 阶段二：虚线 1 向下延伸，连接并激活第二组节点 --- */
-.animate-start .node-1 .line-1 {
-  opacity: 1;
-  height: 64px; /* 🚀 3. 虚线1向下生长延伸 */
-  transition-delay: 0.45s; 
-}
-.animate-start .node-2 .item-blue-dot {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 0.75s; /* 🚀 4. 虚线触及后，节点二小球弹出 */
-}
-.animate-start .node-2 .item-text-content {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.8s; /* 🚀 5. 节点二内容带着出现 */
-}
-
-/* --- 阶段三：虚线 2 向下延伸，连接并激活第三组节点 --- */
-.animate-start .node-2 .line-2 {
-  opacity: 1;
-  height: 64px;
-  transition-delay: 1.1s; /* 🚀 6. 虚线2向下生长 */
-}
-.animate-start .node-3 .item-blue-dot {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 1.4s; /* 🚀 7. 节点三小球弹出 */
-}
-.animate-start .node-3 .item-text-content {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 1.45s; /* 🚀 8. 节点三内容带着出现 */
-}
-
-/* --- 阶段四：虚线 3 向下延伸，最终连接完成第四组节点 --- */
-.animate-start .node-3 .line-3 {
-  opacity: 1;
-  height: 64px;
-  transition-delay: 1.75s; /* 🚀 9. 虚线3向下生长 */
-}
-.animate-start .node-4 .item-blue-dot {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 2.05s; /* 🚀 10. 最后一个小球完美弹出 */
-}
-.animate-start .node-4 .item-text-content {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 2.1s; /* 🚀 11. 最后一个条目带着出现 */
-}
-
-/* 条目文本细节纵向展开写法 */
-.item-text-content h4 {
-  margin-top: 0;
-  margin-bottom: 6px;
-  color: #1a1a1a;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.item-text-content p {
-  margin: 0;
-  color: #666666;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-/* 👉 右侧大图视觉区保持平衡居中 */
-.provider-visual {
-  display: flex;
-  align-items: center;
-  margin-left: 125px; 
-  margin-right: 125px;
-  box-sizing: border-box;
-}
-
-.provider-main-img {
-  width: 958.5px; 
-  height: 558px; 
-  object-fit: cover;
-  border-radius: 8px; 
-}
+.provider-visual { display: flex; align-items: center; margin-left: 125px; margin-right: 125px; box-sizing: border-box; }
+.provider-main-img { width: 958.5px; height: 558px; object-fit: cover; border-radius: 8px; }
 
 /* ==========================================================================
    模块 5：政策专区样式（完好保护）
@@ -890,55 +886,93 @@ const policies = ref<Policy[]>([
 .policy-section { 
   padding-top: 60px;
   padding-bottom: 60px;
-  padding-left: 40px;
-  padding-right: 40px;
-  background-color: #f0f7ff; 
+  background-color: #f5f8ff; 
 }
 
 .policy-content { 
-  max-width: 1400px; 
+  max-width: 1600px; 
   margin: 0 auto; 
   display: flex; 
-  gap: 30px; 
+  gap: 24px; 
+  box-sizing: border-box;
+  padding-left: 100px;
+  padding-right: 100px;
 }
 
-.policy-main { 
-  flex: 2; 
-  background-color: white; 
-  border-radius: 12px; 
-  overflow: hidden; 
+.policy-hover-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #eef2f6;
+  box-sizing: border-box;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              border-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform, box-shadow;
 }
 
-.policy-image { 
-  width: 100%; 
-  height: 200px; 
-  overflow: hidden; 
+.policy-hover-card:hover {
+  transform: translateY(-5px);
+  border-color: #e0e5eb;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.01) !important;
 }
 
-.policy-image img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
+.policy-hover-card:hover .policy-card-title {
+  color: #1677FF;
 }
 
-.policy-main h3 { 
-  padding-top: 20px;
-  padding-bottom: 10px;
-  padding-left: 24px;
-  padding-right: 24px;
-  margin: 0; 
-  font-size: 1.2rem; 
-  color: #333; 
+.policy-hover-card:hover img {
+  transform: scale(1.025);
+}
+
+.policy-main-hero {
+  flex: 1.1; 
+  display: flex;
+  flex-direction: column;
+}
+
+.policy-image-box {
+  width: 100%;
+  height: 340px; 
+  overflow: hidden;
+  background-color: #f7fafc;
+}
+
+.policy-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform;
+}
+
+.hero-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.policy-card-title {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #262626;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .policy-desc { 
-  padding-top: 0;
-  padding-bottom: 15px;
-  padding-left: 24px;
-  padding-right: 24px;
-  margin: 0; 
+  margin-top: 0;
+  margin-bottom: 24px;
   font-size: 0.9rem; 
-  color: #666; 
+  color: #666666; 
   line-height: 1.6; 
   display: -webkit-box; 
   -webkit-line-clamp: 3; 
@@ -946,58 +980,208 @@ const policies = ref<Policy[]>([
   overflow: hidden; 
 }
 
-.policy-meta { 
-  padding-top: 15px;
-  padding-bottom: 20px;
-  padding-left: 24px;
-  padding-right: 24px;
-  border-top: 1px solid #f0f0f0; 
-  display: flex; 
-  justify-content: space-between; 
+.policy-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: auto; 
 }
 
-.policy-list {
+.meta-source,
+.meta-date {
+  font-size: 0.85rem;
+  color: #8c8c8c;
+}
+
+.policy-grid-box {
   flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 20px; 
+}
+
+.policy-sub-grid-item {
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  height: 100%;
 }
 
-.policy-card {
-  padding: 20px;
-  border-radius: 12px;
+.policy-sub-grid-item .policy-card-title {
+  font-size: 1.1rem;
+  -webkit-line-clamp: 2;
 }
 
-.policy-item-title { 
-  margin: 0 0 10px 0; 
-  font-size: 0.95rem; 
-  color: #333; 
-  display: -webkit-box; 
+.policy-grid-desc {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 0.88rem;
+  color: #8c8c8c;
+  line-height: 1.6;
+  display: -webkit-box;
   -webkit-line-clamp: 2; 
-  -webkit-box-orient: vertical; 
-  overflow: hidden; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.policy-item-desc { 
-  margin: 0 0 12px 0; 
-  font-size: 0.85rem; 
-  color: #999; 
-  line-height: 1.5; 
-  display: -webkit-box; 
-  -webkit-line-clamp: 3; 
-  -webkit-box-orient: vertical; 
-  overflow: hidden; 
+.grid-item-footer {
+  margin-top: auto; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.policy-item-meta { 
-  display: flex; 
-  justify-content: space-between; 
-  margin-bottom: 12px; 
+.grid-item-footer .policy-meta-row {
+  flex-direction: column; 
+  align-items: flex-start;
+  gap: 4px;
 }
 
-.policy-link { 
-  font-size: 0.85rem; 
-  color: #409eff; 
-  cursor: pointer; 
+.details-link-arrow {
+  font-size: 0.88rem;
+  color: #1677FF;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+}
+
+.policy-hover-card:hover .details-link-arrow {
+  transform: translateX(3px); 
+}
+
+/* ==========================================================================
+   模块 6：追加大暗色全局 Footer 尾栏（完全还原 image_ee205f 的三列间距排版）
+   ========================================================================== */
+.global-platform-footer {
+  background-color: #212529; 
+  padding-top: 80px;
+  padding-bottom: 40px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.footer-main-content {
+  max-width: 1600px; 
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-left: 100px; 
+  padding-right: 100px;
+  box-sizing: border-box;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column-left .footer-brand-title {
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0;
+  letter-spacing: 1px;
+}
+
+.column-center {
+  flex-grow: 0.5; 
+}
+
+.footer-column-title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 24px;
+  letter-spacing: 0.5px;
+}
+
+.footer-info-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; 
+}
+
+.footer-info-list li {
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.info-label {
+  color: #999999;
+  flex-shrink: 0;
+}
+
+.info-value {
+  color: #cccccc;
+  word-break: break-all;
+}
+
+.column-right {
+  align-items: flex-start;
+}
+
+.footer-consult-btn {
+  width: 120px !important;
+  height: 40px !important;
+  background-color: #1677FF !important; 
+  border-color: #1677FF !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.footer-consult-btn:hover {
+  background-color: #4693ff !important;
+  border-color: #4693ff !important;
+  opacity: 0.95;
+}
+
+.footer-divider-line {
+  max-width: 1600px;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.08); 
+  margin-top: 60px;
+  margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-bottom-bar {
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 100px;
+  padding-right: 100px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+}
+
+.icp-record-text,
+.copyright-text {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 0.85rem;
+  color: #666666; 
+  line-height: 1.5;
+  letter-spacing: 0.3px;
 }
 </style>
