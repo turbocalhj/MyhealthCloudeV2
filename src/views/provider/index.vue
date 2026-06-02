@@ -16,7 +16,7 @@
         </div>
 
         <el-button type="primary" class="banner-action-apply-btn" @click="handleProviderApply">
-          立即申请入驻
+          入驻申请
         </el-button>
       </div>
     </div>
@@ -25,8 +25,6 @@
       
       <div class="process-section-header">
         <h2 class="process-main-title">合作入驻流程</h2>
-        <div class="process-title-underline"></div>
-        <p class="process-sub-title">清晰透明的入驻步骤，助您快速融入全国一体化智算网络</p>
       </div>
 
       <div class="process-image-native-box">
@@ -193,7 +191,7 @@ const handleConsult = () => {
   font-weight: bold;
   color: #222222;
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: 40px;
   letter-spacing: 2px;
 }
 
