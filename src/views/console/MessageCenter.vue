@@ -85,6 +85,48 @@
       </div>
     </div>
 
+    <el-dialog
+      v-model="detailDialogVisible"
+      title="消息详情"
+      width="720px"
+      :align-center="true"
+      class="custom-message-detail-dialog"
+    >
+      <div class="message-matrix-grid-frame">
+        <div class="grid-row-item">
+          <div class="grid-cell-label">标题</div>
+          <div class="grid-cell-value bold-title-text">{{ activeMessageRow.title }}</div>
+        </div>
+
+        <div class="grid-row-item split-two-cols">
+          <div class="half-col">
+            <div class="grid-cell-label">消息分类</div>
+            <div class="grid-cell-value">
+              <span v-if="activeMessageRow.category === '合同'" class="category-tag-node contract-blue-tag">合同</span>
+              <span v-else class="category-tag-node expire-blue-tag">到期通知</span>
+            </div>
+          </div>
+          <div class="half-col border-left-divider">
+            <div class="grid-cell-label">发送时间</div>
+            <div class="grid-cell-value font-mono-style">{{ activeMessageRow.time }}</div>
+          </div>
+        </div>
+
+        <div class="grid-row-item align-stretch-mode">
+          <div class="grid-cell-label content-label-fix">内容</div>
+          <div class="grid-cell-value text-paragraph-content">
+            {{ activeMessageRow.content }}
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="dialog-custom-footer-actions">
+          <el-button type="primary" class="btn-dialog-close-action" @click="detailDialogVisible = false">关闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -99,11 +141,14 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const selectedTableRows = ref<any[]>([])
 
-// 依据截图，精细化编写并递增循环生成 101 条完全不同的高质感平台真实流水消息集
+// 控制详情弹窗的可视性与数据载体
+const detailDialogVisible = ref(false)
+const activeMessageRow = ref<any>({})
+
 const create100PlusMessagesDataset = () => {
   const dataset: any[] = []
   
-  // 先把截图前 5 条真实写死的权威高保真数据推入
+  // 注入完美契合图一、图二高保真快照的核心流水账期通知数据
   dataset.push(
     { id: 1, title: '合同资源配置通知', content: '运营方已配置合同资源，合同编号：yin0529，资源将持续保持高可用监控，请登录资源监控台查看物理设备实例。', category: '合同', status: '未读', time: '2026-06-01 17:15:52' },
     { id: 2, title: '合同即将到期通知', content: '合同编号：HT20260529001（云上合同ID：HT20260529001）即将到达续费截止期，为避免裸金属主机被停机回收，请尽快处理。', category: '到期通知', status: '未读', time: '2026-05-31 09:00:00' },
@@ -114,7 +159,6 @@ const create100PlusMessagesDataset = () => {
     { id: 7, title: '合同申请审批通过通知，业务单号CA202605290942469582', content: '您的合同【单号：CA202605290942469582】审批通过，对应云主机和网络频宽配置就绪。', category: '合同', status: '未读', time: '2026-05-29 09:42:58' }
   )
 
-  // 快捷生成后续 94 条长历史消息（总数达到 101 条，完美撑起多页数据）
   for (let i = 1; i <= 94; i++) {
     const isEven = i % 2 === 0
     const mockDay = 28 - Math.floor(i / 4)
@@ -127,7 +171,7 @@ const create100PlusMessagesDataset = () => {
         ? `运营方已建立全新的影子副本，合同 yin0525 的资源续期已挂载，内网互通拓扑保持稳定，业务流量将无感流转。`
         : `【通用云主机】资源名称：300pro-disk-m，ID：873589438${i} 租赁租期已到，系统已自动转入 72 小时数据保护观察隔离区。`,
       category: isEven ? '合同' : '到期通知',
-      status: i > 15 ? '已读' : '未读', // 前面一部分留作未读，后面全部是已读
+      status: i > 15 ? '已读' : '未读',
       time: `2026-05-${formattedDay} 14:${(i % 60).toString().padStart(2, '0')}:12`
     })
   }
@@ -137,7 +181,6 @@ const create100PlusMessagesDataset = () => {
 
 const globalMessagesMasterSource = ref(create100PlusMessagesDataset())
 
-// 计算层：按检索词过滤
 const filteredMessageDataset = computed(() => {
   return globalMessagesMasterSource.value.filter(item => {
     const matchCat = !categoryFilter.value || item.category === categoryFilter.value
@@ -148,7 +191,6 @@ const filteredMessageDataset = computed(() => {
 
 const filteredMessageTotalCount = computed(() => filteredMessageDataset.value.length)
 
-// 分页动态截取
 const paginatedMessageData = computed(() => {
   const startOffset = (currentPage.value - 1) * pageSize.value
   return filteredMessageDataset.value.slice(startOffset, startOffset + pageSize.value)
@@ -160,7 +202,6 @@ const handleTableSelectionChange = (val: any[]) => { selectedTableRows.value = v
 const handlePageSizeChange = (val: number) => { pageSize.value = val; currentPage.value = 1 }
 const handleCurrentPageChange = (val: number) => { currentPage.value = val }
 
-// 功能方法：消息状态改变动作
 const toggleSingleRead = (row: any) => {
   if (row.status === '未读') { row.status = '已读'; ElMessage.success('消息已标为阅读态') }
 }
@@ -172,7 +213,13 @@ const allMarkAsRead = () => {
   globalMessagesMasterSource.value.forEach(row => { row.status = '已读' })
   ElMessage.success('当前面板中所有未读通知已全局一键清空')
 }
-const checkMessageDetail = (row: any) => { row.status = '已读'; ElMessage.info(`正在打开消息密档详情: ${row.id}`) }
+
+// 🚀 核心改动点：详情点击动作流，同步切为阅读态并唤醒多态弹窗面板
+const checkMessageDetail = (row: any) => { 
+  row.status = '已读'
+  activeMessageRow.value = row
+  detailDialogVisible.value = true
+}
 </script>
 
 <style scoped>
@@ -185,7 +232,6 @@ const checkMessageDetail = (row: any) => { row.status = '已读'; ElMessage.info
 .btn-blue-search-action { background-color: #1677FF !important; border-color: #1677FF !important; }
 .batch-manipulation-trigger-row { display: flex; gap: 12px; border-top: 1px solid #F2F3F5; padding-top: 12px; padding-bottom: 4px; }
 
-/* 批量和表单元素定制 */
 .btn-plain-batch-read { border-color: #E5E6EB !important; color: #4E5969 !important; background-color: #ffffff !important; }
 .btn-plain-batch-read:hover:not(:disabled) { border-color: #1677FF !important; color: #1677FF !important; }
 .btn-outline-all-read { color: #1677FF !important; border-color: #1677FF !important; background-color: #E8F3FF !important; }
@@ -194,12 +240,8 @@ const checkMessageDetail = (row: any) => { row.status = '已读'; ElMessage.info
 .title-text-node { font-size: 14px; color: #4E5969; }
 .is-unread-bold { font-weight: 500; color: #1D2129 !important; }
 
-/* --------------------------------------------------------------------------
-   图一真实还原：未读态呈现清爽带小气泡的蓝色可交互链接效果
-   -------------------------------------------------------------------------- */
 .status-badge-lbl-link { display: inline-flex; align-items: center; font-size: 14px; cursor: pointer; user-select: none; }
 .color-interactive-blue { color: #1677FF; }
-.color-interactive-blue:hover { text-decoration: underline; }
 .color-neutral-read { color: #86909C; cursor: default; }
 .bubble-icon-prefix { margin-right: 4px; font-size: 14px; }
 
@@ -207,4 +249,132 @@ const checkMessageDetail = (row: any) => { row.status = '已读'; ElMessage.info
 .action-check-detail-btn:hover { color: #4096ff; }
 .table-pagination-footer-row { display: flex; justify-content: flex-end; padding-top: 20px; }
 .icon-margin { margin-right: 4px; }
+
+/* ==========================================================================
+   🚀 弹窗面板矩阵格子框架：完美还原图一、图二细致的双线条及灰底色框骨架
+   ========================================================================== */
+.message-matrix-grid-frame {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #E5E6EB;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.grid-row-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #E5E6EB;
+  min-height: 48px;
+}
+
+.grid-row-item:last-child {
+  border-bottom: none;
+}
+
+/* 标签列样式：浅灰底色带右边框 */
+.grid-cell-label {
+  width: 110px;
+  background-color: #F7F8FA;
+  color: #4E5969;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #E5E6EB;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* 内容列内容样式 */
+.grid-cell-value {
+  flex: 1;
+  padding-left: 20px;
+  padding-right: 20px;
+  color: #1D2129;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.bold-title-text {
+  font-weight: 600;
+  color: #1D2129;
+}
+
+/* 复合双列排版 */
+.split-two-cols {
+  display: flex;
+  align-items: stretch;
+}
+
+.half-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.border-left-divider {
+  border-left: 1px solid #E5E6EB;
+}
+
+/* 动态轻奢圆角标签 */
+.category-tag-node {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* 图一专属：合同蓝色徽章标签 */
+.contract-blue-tag {
+  background-color: #E8F3FF;
+  color: #1677FF;
+}
+
+/* 图二专属：到期通知淡蓝徽章标签 */
+.expire-blue-tag {
+  background-color: #E6F7FF;
+  color: #1D5BFF;
+  border: 1px solid #91D5FF;
+}
+
+/* 正文段落对齐规范 */
+.align-stretch-mode {
+  align-items: stretch;
+}
+
+.content-label-fix {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 16px;
+}
+
+.text-paragraph-content {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.font-mono-style {
+  font-family: Consolas, Monaco, monospace;
+  color: #4E5969;
+}
+
+/* 底部操作 */
+.dialog-custom-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 4px;
+}
+
+.btn-dialog-close-action {
+  background-color: #1677FF !important;
+  border-color: #1677FF !important;
+  padding: 8px 20px !important;
+  font-size: 14px !important;
+  border-radius: 4px !important;
+}
 </style>
