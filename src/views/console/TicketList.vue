@@ -67,7 +67,7 @@
         style="width: 100%" 
         size="default"
         class="custom-clean-data-table"
-        :header-cell-style="{ background: '#F7F8FA', color: '#1D2129', fontWeight: '500', height: '44px', padding: '0' }"
+        :header-cell-style="{ background: '#F7F8FA', color: '#1D2129', fontWeight: '500', height: '44px' }"
       >
         <el-table-column prop="ticketId" label="工单编号" width="200" />
         
@@ -98,7 +98,8 @@
               
               <span v-if="scope.row.status === '待处理'" class="action-link-btn warning-lbl" @click="handleCancel(scope.row)">撤回</span>
               <span v-else-if="scope.row.status === '已撤回'" class="action-link-btn danger-lbl" @click="handleDelete(scope.row)">删除</span>
-              <span v-else class="action-link-btn info-lbl" @click="handleClose(scope.row)">关闭</span>
+              <span v-else-if="scope.row.status !== '已关闭'" class="action-link-btn info-lbl" @click="handleClose(scope.row)">关闭</span>
+              <span v-else class="action-link-btn finished-disabled-lbl">--</span>
             </div>
           </template>
         </el-table-column>
@@ -109,7 +110,7 @@
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
           :page-sizes="[10, 20, 50]"
-          :total="totalRecords"
+          :total="filteredTableData.length"
           layout="total, prev, pager, next, sizes"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -129,7 +130,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 
-// 检索筛选表单层响应式变量
 const filterForm = ref({
   timeRange: null,
   ticketId: '',
@@ -138,12 +138,10 @@ const filterForm = ref({
   status: ''
 })
 
-// 分页元数据
 const currentPage = ref(1)
 const pageSize = ref(10)
-const totalRecords = ref(35)
 
-// 100% 深度克隆图一原始快照真实数据集
+// 完美反填图一原始工单数据集矩阵
 const tableRawDataset = ref([
   { ticketId: 'WA202604180043013110', title: '故障咨询', ticketType: '故障工单', status: '转派待接收', reporter: '张海洋', createTime: '2026-04-18 00:43:01', updateTime: '2026-04-18 00:43:40' },
   { ticketId: 'WA202604121219522077', title: 'ceshi09328e4032', ticketType: '资源类工单', status: '已撤回', reporter: '张海洋', createTime: '2026-04-12 12:19:52', updateTime: '2026-04-12 12:20:04' },
@@ -157,7 +155,6 @@ const tableRawDataset = ref([
   { ticketId: 'WA202604112239050107', title: '工单提报', ticketType: '资源类工单', status: '待处理', reporter: '张海洋', createTime: '2026-04-11 22:39:05', updateTime: '2026-04-11 22:39:04' }
 ])
 
-// 用于支撑本地模拟检索过滤计算机制
 const filteredTableData = computed(() => {
   return tableRawDataset.value.filter(item => {
     const matchId = !filterForm.value.ticketId || item.ticketId.includes(filterForm.value.ticketId)
@@ -168,14 +165,11 @@ const filteredTableData = computed(() => {
   })
 })
 
-// 分页截取处理
 const paginatedTableData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredTableData.value.slice(start, end)
+  return filteredTableData.value.slice(start, start + pageSize.value)
 })
 
-// 依据状态字符串映射对应图一的实色外圈样式类名
 const getStatusClass = (status: string) => {
   switch (status) {
     case '转派待接收': return 'status-transfer-wait'
@@ -188,24 +182,46 @@ const getStatusClass = (status: string) => {
   }
 }
 
-// 核心业务行为方法流转
-const handleSearch = () => {
-  currentPage.value = 1
-  ElMessage.success('筛选过滤条件载入成功')
-}
+const handleSearch = () => { currentPage.value = 1; ElMessage.success('筛选过滤条件载入成功') }
+const handleReset = () => { filterForm.value = { timeRange: null, ticketId: '', ticketType: '', title: '', status: '' }; currentPage.value = 1 }
+const goToCreateTicket = () => { router.push('/console/ticket-create') }
 
-const handleReset = () => {
-  filterForm.value = { timeRange: null, ticketId: '', ticketType: '', title: '', status: '' }
-  currentPage.value = 1
-}
-
-// 跳转到图二页面
-const goToCreateTicket = () => {
-  router.push('/console/ticket-create')
-}
-
+// 🚀 核心改动 1：详情动作流，携带 Query 精准下沉跳转图二页面
 const handleDetail = (row: any) => {
-  ElMessage.info(`正在调取工单详情: ${row.ticketId}`)
+  router.push({
+    path: '/console/ticket-detail',
+    query: {
+      ticketId: row.ticketId,
+      title: row.title,
+      ticketType: row.ticketType,
+      status: row.status,
+      createTime: row.createTime
+    }
+  })
+}
+
+// 🚀 核心改动 2：完美实现图一遮罩式“关闭确认”弹窗提示与状态切换
+const handleClose = (row: any) => {
+  ElMessageBox.confirm(
+    `确定要关闭工单【${row.ticketId}】吗？关闭后将无法继续处理。`,
+    '关闭确认',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      confirmButtonClass: 'el-button--warning',
+      type: 'warning',
+      customClass: 'custom-confirm-box-style'
+    }
+  ).then(() => {
+    row.status = '已关闭'
+    ElMessage({
+      message: '工单已关闭',
+      type: 'success',
+      duration: 3000
+    })
+  }).catch(() => {
+    // 点击取消不做处理
+  })
 }
 
 const handleCancel = (row: any) => {
@@ -222,222 +238,47 @@ const handleDelete = (row: any) => {
   })
 }
 
-const handleClose = (row: any) => {
-  row.status = '已关闭'
-  ElMessage.info('工单强制变更为关闭终止态')
-}
-
-const handleSizeChange = (val: number) => { pageSize.value = val }
+const handleSizeChange = (val: number) => { pageSize.value = val; currentPage.value = 1 }
 const handleCurrentChange = (val: number) => { currentPage.value = val }
 </script>
 
 <style scoped>
-/* ==========================================================================
-   全局工作空间板式
-   ========================================================================== */
-.console-ticket-management-workspace {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
+.console-ticket-management-workspace { display: flex; flex-direction: column; gap: 16px; width: 100%; box-sizing: border-box; }
+.filter-search-panel-card { background-color: #ffffff; padding: 20px 24px 4px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); }
+.filter-inline-form { display: flex; flex-wrap: wrap; gap: 4px 0px; }
+:deep(.el-form-item) { margin-right: 28px !important; margin-bottom: 16px !important; display: flex; align-items: center; }
+:deep(.el-form-item__label) { font-size: 14px !important; color: #4E5969 !important; font-weight: 400 !important; padding-right: 12px !important; }
+.standard-form-width { width: 200px !important; }
+.standard-form-width-date { width: 260px !important; }
+.filter-actions-form-item { margin-left: auto; margin-right: 0 !important; }
+.action-search-primary-btn { background-color: #1677FF !important; border-color: #1677FF !important; }
 
-/* ==========================================================================
-   1. 高级检索卡片盒样式区
-   ========================================================================== */
-.filter-search-panel-card {
-  background-color: #ffffff;
-  padding: 20px 24px 4px 24px;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
-}
+.data-table-container-card { background-color: #ffffff; padding: 20px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); display: flex; flex-direction: column; }
+.table-top-bar-actions { margin-bottom: 16px; display: flex; justify-content: flex-start; }
+.table-create-ticket-action-btn { background-color: #1677FF !important; border-color: #1677FF !important; font-size: 14px !important; padding: 8px 16px !important; height: 34px; }
+.plus-icon-margin { margin-right: 4px; }
+.custom-clean-data-table { font-size: 14px; color: #1D2129; }
+:deep(.el-table__row) { height: 48px; }
+.interactive-blue-link-lbl { color: #1677FF; cursor: pointer; user-select: none; font-weight: 500; }
+.interactive-blue-link-lbl:hover { text-decoration: underline; }
 
-.filter-inline-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 0px;
-}
+/* 状态标签外圈实线色块架构 */
+.status-tag-pill-node { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 12px; font-size: 12px; line-height: 18px; }
+.status-dot-inner { font-size: 8px; }
+.status-transfer-wait { background-color: #F5EEFF; color: #722ED1; border: 1px solid #D3ADF7; }
+.status-withdrawn { background-color: #FFF0F6; color: #EB2F96; border: 1px solid #FFADD2; }
+.status-closed { background-color: #F5F5F5; color: #595959; border: 1px solid #D9D9D9; }
+.status-processing { background-color: #FFFBE6; color: #D46B08; border: 1px solid #FFE7BA; }
+.status-client-feedback { background-color: #FFF7E6; color: #D46B08; border: 1px solid #FFD591; }
+.status-pending { background-color: #E6F7FF; color: #1D5BFF; border: 1px solid #91D5FF; }
 
-:deep(.el-form-item) {
-  margin-right: 28px !important;
-  margin-bottom: 16px !important;
-  display: flex;
-  align-items: center;
-}
-
-:deep(.el-form-item__label) {
-  font-size: 14px !important;
-  color: #4E5969 !important;
-  font-weight: 400 !important;
-  padding-right: 12px !important;
-}
-
-.standard-form-width {
-  width: 200px !important;
-}
-
-.standard-form-width-date {
-  width: 260px !important;
-}
-
-/* 按钮位置排版机制 */
-.filter-actions-form-item {
-  margin-left: auto;
-  margin-right: 0 !important;
-}
-
-.action-search-primary-btn {
-  background-color: #1677FF !important;
-  border-color: #1677FF !important;
-}
-
-.action-search-primary-btn:hover {
-  background-color: #4096ff !important;
-}
-
-/* ==========================================================================
-   2. 数据表格底层卡片区（包含图一的高质感 Badge 标签）
-   ========================================================================== */
-.data-table-container-card {
-  background-color: #ffffff;
-  padding: 20px 24px;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
-  display: flex;
-  flex-direction: column;
-}
-
-.table-top-bar-actions {
-  margin-bottom: 16px;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.table-create-ticket-action-btn {
-  background-color: #1677FF !important;
-  border-color: #1677FF !important;
-  font-size: 14px !important;
-  padding: 8px 16px !important;
-  height: 34px;
-}
-
-.plus-icon-margin {
-  margin-right: 4px;
-}
-
-/* 纯净简洁风格 Element Plus 边框及单元格定制 */
-.custom-clean-data-table {
-  font-size: 14px;
-  color: #1D2129;
-}
-
-:deep(.el-table__row) {
-  height: 48px;
-}
-
-.interactive-blue-link-lbl {
-  color: #1677FF;
-  cursor: pointer;
-  user-select: none;
-}
-
-.interactive-blue-link-lbl:hover {
-  text-decoration: underline;
-}
-
-/* --------------------------------------------------------------------------
-   图一核心高保真还原：状态标签外圈实线色块架构
-   -------------------------------------------------------------------------- */
-.status-tag-pill-node {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 18px;
-}
-
-.status-dot-inner {
-  font-size: 8px;
-}
-
-/* 转派待接收（浅紫） */
-.status-transfer-wait {
-  background-color: #F5EEFF;
-  color: #722ED1;
-  border: 1px solid #D3ADF7;
-}
-
-/* 已撤回（淡粉） */
-.status-withdrawn {
-  background-color: #FFF0F6;
-  color: #EB2F96;
-  border: 1px solid #FFADD2;
-}
-
-/* 已关闭（浅灰） */
-.status-closed {
-  background-color: #F5F5F5;
-  color: #595959;
-  border: 1px solid #D9D9D9;
-}
-
-/* 处理中（明黄） */
-.status-processing {
-  background-color: #FFFBE6;
-  color: #D46B08;
-  border: 1px solid #FFE7BA;
-}
-
-/* 待客户反馈（橙黄） */
-.status-client-feedback {
-  background-color: #FFF7E6;
-  color: #D46B08;
-  border: 1px solid #FFD591;
-}
-
-/* 待处理（纯蓝） */
-.status-pending {
-  background-color: #E6F7FF;
-  color: #1D5BFF;
-  border: 1px solid #91D5FF;
-}
-
-/* --------------------------------------------------------------------------
-   操作动作流超轻量化链接链
-   -------------------------------------------------------------------------- */
-.table-actions-inline-flex {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.action-link-btn {
-  color: #1677FF;
-  cursor: pointer;
-  user-select: none;
-}
-
-.action-link-btn:hover {
-  color: #4096ff;
-}
-
+/* 操作动作按钮流 */
+.table-actions-inline-flex { display: flex; align-items: center; gap: 14px; }
+.action-link-btn { color: #1677FF; cursor: pointer; font-size: 14px; user-select: none; }
+.action-link-btn:hover { color: #4096ff; }
 .warning-lbl { color: #E6A23C; }
-.warning-lbl:hover { color: #f3b755; }
-
 .danger-lbl { color: #F53F3F; }
-.danger-lbl:hover { color: #ff6363; }
-
 .info-lbl { color: #86909C; }
-.info-lbl:hover { color: #a9b4c3; }
-
-/* 分页 */
-.table-pagination-footer-row {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 18px;
-}
+.finished-disabled-lbl { color: #C9CDD4; cursor: not-allowed; font-size: 14px; }
+.table-pagination-footer-row { display: flex; justify-content: flex-end; padding-top: 18px; }
 </style>

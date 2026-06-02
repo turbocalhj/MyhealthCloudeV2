@@ -144,7 +144,13 @@ const routes = [
         component: () => import('@/views/console/TicketCreate.vue'),
         meta: { title: '创建工单' }
       },
-      // src/router/index.ts 内部对应部分
+      {
+        path: 'ticket-detail',
+        name: 'TicketDetail',
+        component: () => import('@/views/console/TicketDetail.vue'),
+        meta: { title: '工单服务详情' }
+      },
+            // src/router/index.ts 内部对应部分
       {
         path: 'order-apply',
         name: 'OrderApply',
