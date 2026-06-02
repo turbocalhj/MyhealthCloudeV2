@@ -1,5 +1,5 @@
 <template>
-  <div class="console-card-container">
+  <div class="console-card-container notranslate" translate="no">
     <div class="filter-tabs-row-box">
       <span class="filter-caption-lbl">到期时间</span>
       <el-radio-group v-model="activeTimeTab" size="small" @change="handleTimeTabChange">
@@ -59,10 +59,10 @@
         </template>
 
         <template v-else>
-          <el-table-column prop="resourceId" label="资源ID" width="180" />
+          <el-table-column prop="resourceId" label="资源ID" width="180" show-overflow-tooltip />
           <el-table-column prop="resourceName" label="资源名称" min-width="150">
             <template #default="scope">
-              <span class="table-blue-link-lbl">{{ scope.row.resourceName }}</span>
+              <span class="table-blue-link-lbl" @click="handleCheckDetail(scope.row)">{{ scope.row.resourceName }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="resourceType" label="资源类型" width="120" />
@@ -91,36 +91,28 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
+const router = useRouter()
 
 const activeTimeTab = ref('全部')
 const contractIdQuery = ref('')
 const contractNameQuery = ref('')
 
-// 辨别当前页面路由是否属于图七合同到期模块
 const isContractMode = computed(() => route.path.includes('contract'))
-
-// 辨别当前路由是否属于图六通算到期模块（图六强制触发无数据空状态占位）
 const isEmptyData = computed(() => route.path.includes('general'))
 
-// 100% 对应图五、图七真实快照数据集定义
 const mockIntelligentResourceList = ref([
-  { resourceId: '8731370905908269056', resourceName: 'yintestLiantong', resourceType: '裸金属', region: '萧山区', gpuModel: 'Huawei Atlas 300', gpuNum: 2, vram: '64GB', cpu: '104核', memory: '256GB', systemDisk: '--' },
-  { resourceId: '825416335817216000', resourceName: 'sherrytestalam1', resourceType: '裸金属', region: '拱墅区', gpuModel: 'Ascend 910B4', gpuNum: 8, vram: '64GB', cpu: '128核', memory: '1536GB', systemDisk: '894GB' },
-  { resourceId: '821876165683744768', resourceName: 'FT-BMS-Prod-shenxinfu...', resourceType: '裸金属', region: '萧山区', gpuModel: 'Huawei Ascend 9...', gpuNum: 1, vram: '32GB', cpu: '192核', memory: '1024GB', systemDisk: '894GB' },
-  { resourceId: 'test_B', resourceName: 'test_B', resourceType: '裸金属', region: '萧山区', gpuModel: 'Huawei Ascend 9...', gpuNum: 8, vram: '64GB', cpu: '16核', memory: '10GB', systemDisk: '200GB' },
-  { resourceId: 'test_C', resourceName: 'test_C', resourceType: '裸金属', region: '萧山区', gpuModel: 'Huawei Ascend 9...', gpuNum: 8, vram: '64GB', cpu: '16核', memory: '10GB', systemDisk: '200GB' }
+  { resourceId: '8731370905908269056', resourceName: 'yintestLiantong', resourceType: '裸金属', region: '萧山区', gpuModel: 'Huawei Atlas 300', gpuNum: 2, vram: '64GB', cpu: '104核', memory: '256GB', systemDisk: '--', intranetIp: '192.168.20.121', status: '运行中' },
+  { resourceId: '825416335817216000', resourceName: 'sherrytestalam1', resourceType: '裸金属', region: '拱墅区', gpuModel: 'Ascend 910B2', gpuNum: 8, vram: '64GB', cpu: '128核', memory: '1536GB', systemDisk: '894GB', intranetIp: '192.168.20.122', status: '运行中' },
+  { resourceId: '821876165683744768', resourceName: 'FT-BMS-Prod-sh...', resourceType: '裸金属', region: '萧山区', gpuModel: 'Huawei Ascend 910', gpuNum: 1, vram: '32GB', cpu: '192核', memory: '1024GB', systemDisk: '894GB', intranetIp: '192.168.20.125', status: '运行中' }
 ])
 
 const mockContractList = ref([
-  { contractId: 'HT20260529001', contractName: '阿里合同', cloudId: 'HT20260529001', demandUser: '测评中心', providerUser: '健康云', amount: '¥0.00', status: '履约中', startTime: '2026-05-29', endTime: '2026-06-29' },
-  { contractId: 'aaa2', contractName: 'aaa2', cloudId: 'aaa2', demandUser: '测评中心', providerUser: '健康云', amount: '¥0.00', status: '履约中', startTime: '2026-03-31', endTime: '2026-04-30' },
-  { contractId: 'HT-260423-002', contractName: 'HT-260423-002', cloudId: 'HT-260423-002', demandUser: '测评中心', providerUser: '中国移动', amount: '¥1,000.00', status: '履约中', startTime: '2026-03-01', endTime: '2026-04-01' },
-  { contractId: 'HT-260423-001', contractName: 'HT-260423-001', cloudId: 'HT-260423-001', demandUser: '测评中心', providerUser: '中国移动', amount: '¥1,000.00', status: '履约中', startTime: '2026-04-01', endTime: '2026-05-01' }
+  { contractId: 'HT20260529001', contractName: '阿里合同', cloudId: 'HT20260529001', demandUser: '测评中心', providerUser: '健康云', amount: '¥0.00', status: '履约中', startTime: '2026-05-29', endTime: '2026-06-29' }
 ])
 
 const renderedTableData = computed(() => {
@@ -133,26 +125,44 @@ const renderedTableData = computed(() => {
   return mockIntelligentResourceList.value
 })
 
-const handleTimeTabChange = (val: any) => {
-  console.log('时间分发筛选点:', val)
+// 🚀 核心：赋予智算到期查看“图二/图三高保真趋势详情看板”的功能
+const handleCheckDetail = (row: any) => {
+  if (isContractMode.value) {
+    ElMessage.info(`合同详请单号: ${row.contractId}`)
+    return
+  }
+  
+  // 如果是智算到期资产，直接导流跳转到精美看板
+  router.push({
+    path: '/console/resource-detail',
+    query: {
+      id: row.resourceId,
+      name: row.resourceName,
+      status: row.status || '运行中',
+      intranetIp: row.intranetIp || '192.168.2.166',
+      cpu: row.cpu,
+      memory: row.memory,
+      systemDisk: row.systemDisk,
+      region: row.region,
+      gpuModel: row.gpuModel,
+      gpuNum: row.gpuNum,
+      vram: row.vram,
+      demander: '测评中心',
+      provider: '中国联通'
+    }
+  })
 }
 
-watch(() => route.path, () => {
-  contractIdQuery.value = ''
-  contractNameQuery.value = ''
-  activeTimeTab.value = '全部'
-})
-
-const handleSearch = () => { ElMessage.success('到期数据条件筛选检索完毕') }
+const handleTimeTabChange = (val: any) => { console.log(val) }
+const handleSearch = () => { ElMessage.success('到期检索完毕') }
 const handleReset = () => { contractIdQuery.value = ''; contractNameQuery.value = '' }
-const handleCheckDetail = (row: any) => { ElMessage.info(`调取资源账期详请: ${row.contractId || row.resourceId}`) }
 </script>
 
 <style scoped>
 .console-card-container { background: #ffffff; padding: 20px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,21,41,.03); }
 .filter-tabs-row-box { display: flex; align-items: center; gap: 16px; margin-bottom: 4px; }
-.filter-caption-lbl { font-size: 14px; color: #4E5969; font-weight: 400; }
-.contract-advanced-search-bar { display: flex; justify-content: space-between; align-items: center; background-color: #FAFAFA; padding: 14px 20px; border-radius: 4px; margin-top: 16px; margin-bottom: 4px; }
+.filter-caption-lbl { font-size: 14px; color: #4E5969; }
+.contract-advanced-search-bar { display: flex; justify-content: space-between; align-items: center; background-color: #FAFAFA; padding: 14px 20px; border-radius: 4px; margin-top: 16px; }
 .search-fields-flex { display: flex; gap: 24px; }
 .field-cell { display: flex; align-items: center; gap: 10px; }
 .cell-label { font-size: 14px; color: #4E5969; }
@@ -160,8 +170,6 @@ const handleCheckDetail = (row: any) => { ElMessage.info(`调取资源账期详�
 .empty-state-workspace-canvas { padding: 60px 0; display: flex; justify-content: center; align-items: center; }
 .table-blue-link-lbl { color: #1677FF; cursor: pointer; }
 .action-blue-link-btn { color: #1677FF; cursor: pointer; font-size: 14px; }
-
-/* 图七专门的高质感实色轻蓝色合同签约履约状态徽章标签 */
-.blue-contract-status-pill { background-color: #E8F3FF; color: #1677FF; padding: 2px 10px; border-radius: 2px; font-size: 12px; font-weight: 500; }
+.blue-contract-status-pill { background-color: #E8F3FF; color: #1677FF; padding: 2px 10px; border-radius: 2px; font-size: 12px; }
 .pagination-footer-flex-row { display: flex; justify-content: flex-end; padding-top: 20px; }
 </style>

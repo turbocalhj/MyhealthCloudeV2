@@ -67,7 +67,7 @@
             <el-sub-menu index="expire-group">
               <template #title>
                 <el-icon class="menu-icon-native"><Calendar /></el-icon>
-                <span>面对管理</span>
+                <span>到期管理</span>
               </template>
               <el-menu-item index="/console/expire-intel">智算到期</el-menu-item>
               <el-menu-item index="/console/expire-general">通算到期</el-menu-item>
