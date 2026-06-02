@@ -77,7 +77,7 @@
             <el-sub-menu index="order-group">
               <template #title>
                 <el-icon class="menu-icon-native"><ShoppingBag /></el-icon>
-                <span>我的订阅</span>
+                <span>我的订购</span>
               </template>
               <el-menu-item index="/console/order-apply">我的申请</el-menu-item>
               <el-menu-item index="/console/order-renew">资源续费</el-menu-item>

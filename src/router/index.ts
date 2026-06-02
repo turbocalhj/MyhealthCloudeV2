@@ -143,6 +143,20 @@ const routes = [
         name: 'TicketCreate',
         component: () => import('@/views/console/TicketCreate.vue'),
         meta: { title: '创建工单' }
+      },
+      // src/router/index.ts 内部对应部分
+      {
+        path: 'order-apply',
+        name: 'OrderApply',
+        component: () => import('@/views/console/OrderManager.vue'),
+        meta: { title: '我的申请' }
+      },
+      // 🚀 追加此节点：开辟独立的详情页专属物理路径
+      {
+        path: 'apply-detail',
+        name: 'ApplyDetail',
+        component: () => import('@/views/console/ApplyDetail.vue'),
+        meta: { title: '申请工单详情' }
       }
     ]
   },
