@@ -40,6 +40,7 @@
         <el-aside width="220px" class="console-left-sidebar-aside">
           <div class="sidebar-context-caption">控制台</div>
           
+          <!-- 修改点：:default-openeds 绑定为动态计算的 openedGroups -->
           <el-menu
             :default-active="activeMenu"
             class="console-clean-vertical-menu"
@@ -47,7 +48,7 @@
             background-color="#ffffff"
             text-color="#4e5969"
             active-text-color="#1677FF"
-            :default-openeds="['resource-group', 'expire-group', 'order-group', 'equity-group', 'message-group', 'ticket-group']"
+            :default-openeds="openedGroups"
           >
             <el-sub-menu index="resource-group">
               <template #title>
@@ -138,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue' // 引入 computed[cite: 1]
 import { useRoute, useRouter } from 'vue-router'
 import { 
   ArrowDown, Bell, Cpu, Connection, Calendar, 
@@ -151,7 +152,31 @@ const router = useRouter()
 const activeMenu = ref('')
 activeMenu.value = route.path
 
-// 实时侦听当前路由节点变化，保证左侧菜单在前进后退、前后台交互时自动选中
+// 1. 定义路径与菜单组的映射关系[cite: 1]
+const pathToGroupMap: Record<string, string> = {
+  '/console/bms': 'resource-group',
+  '/console/ecs': 'resource-group',
+  '/console/container': 'resource-group',
+  '/console/expire-intel': 'expire-group',
+  '/console/expire-general': 'expire-group',
+  '/console/expire-contract': 'expire-group',
+  '/console/order-apply': 'order-group',
+  '/console/order-renew': 'order-group',
+  '/console/order-quit': 'order-group',
+  '/console/my-equity': 'equity-group',
+  '/console/message': 'message-group',
+  '/console/ticket-list': 'ticket-group',
+  '/console/ticket-create': 'ticket-group'
+}
+
+// 2. 动态计算当前应该展开的分组[cite: 1]
+// 如果当前路径有对应分组，则展开该分组；否则默认展开 'resource-group'（图一效果）[cite: 1]
+const openedGroups = computed(() => {
+  const currentGroup = pathToGroupMap[route.path]
+  return currentGroup ? [currentGroup] : ['resource-group']
+})
+
+// 实时侦听当前路由节点变化
 watch(() => route.path, (newPath) => {
   activeMenu.value = newPath
 })
@@ -167,6 +192,7 @@ const handleTicketCommand = (command: string) => {
 </script>
 
 <style scoped>
+/* 样式部分保持不变[cite: 1] */
 .console-global-frame-layout { width: 100vw; height: 100vh; overflow: hidden; background-color: #F4F6FA; display: flex; flex-direction: column; box-sizing: border-box; }
 .full-viewport-height-box { height: 100%; display: flex; flex-direction: column; }
 .console-top-global-header { height: 60px !important; background-color: #ffffff; border-bottom: 1px solid #E5E6EB; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; flex-shrink: 0; z-index: 100; }
@@ -186,7 +212,6 @@ const handleTicketCommand = (command: string) => {
 .sidebar-context-caption { height: 44px; line-height: 44px; padding-left: 20px; font-size: 13px; font-weight: 600; color: #1D2129; margin-top: 10px; }
 .console-clean-vertical-menu { border-right: none !important; padding-top: 2px; flex: 1; overflow-y: auto; }
 
-/* 深度作用对齐：使二级展开行和普通大分类在视觉规格上实现像素级绝对融合 */
 :deep(.el-sub-menu__title) { height: 40px !important; line-height: 40px !important; font-size: 14px !important; color: #1D2129 !important; padding-left: 20px !important; margin: 3px 12px !important; border-radius: 4px; }
 :deep(.el-sub-menu__title:hover) { background-color: #F2F3F5 !important; }
 :deep(.el-menu-item) { height: 40px !important; line-height: 40px !important; font-size: 13px !important; margin: 3px 12px !important; border-radius: 4px; color: #4E5969 !important; padding-left: 44px !important; display: flex; align-items: center; }
@@ -195,7 +220,6 @@ const handleTicketCommand = (command: string) => {
 :deep(.el-menu-item.is-active) { background-color: #E8F3FF !important; color: #1677FF !important; font-weight: 500; }
 :deep(.el-menu-item.is-active) .menu-icon-native { color: #1677FF !important; }
 
-/* 右侧画布及独立解耦的高清皮肤滚动条规范样式（解决 & 选择器吞灭滚动条的问题） */
 .console-body-workspace-canvas { flex: 1; padding: 20px 24px 24px 24px; overflow-y: auto; box-sizing: border-box; background-color: #F4F6FA; }
 .console-body-workspace-canvas::-webkit-scrollbar { width: 6px !important; height: 6px !important; }
 .console-body-workspace-canvas::-webkit-scrollbar-track { background: transparent !important; }
