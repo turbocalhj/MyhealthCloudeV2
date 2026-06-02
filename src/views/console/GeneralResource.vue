@@ -1,6 +1,5 @@
 <template>
-  <div class="console-general-resource-workspace-page">
-    
+  <div class="console-general-resource-workspace-page notranslate" translate="no">
     <div class="search-filter-card-box">
       <div class="filter-layout-inline-row">
         <div class="filter-input-cell">
@@ -35,7 +34,7 @@
         
         <el-table-column prop="name" label="资源名称" min-width="160">
           <template #default="scope">
-            <span class="interactive-blue-link-lbl">{{ scope.row.name }}</span>
+            <span class="interactive-blue-link-lbl" @click="goToDetailPage(scope.row)">{{ scope.row.name }}</span>
           </template>
         </el-table-column>
         
@@ -55,7 +54,7 @@
         <el-table-column label="操作" fixed="right" width="130">
           <template #default="scope">
             <div class="table-inline-actions-flex">
-              <span class="action-blue-link" @click="handleAction('detail', scope.row)">详情</span>
+              <span class="action-blue-link" @click="goToDetailPage(scope.row)">详情</span>
               <span class="action-blue-link" @click="handleAction('restart', scope.row)">重启</span>
               
               <el-dropdown trigger="click" @command="(cmd: string) => handleMoreCommand(cmd, scope.row)">
@@ -76,36 +75,30 @@
 
       <div class="table-pagination-footer-row">
         <el-pagination 
-          :total="39" 
+          :total="filteredTableData.length" 
           :current-page="1" 
           :page-size="10" 
           layout="total, prev, pager, next, sizes" 
         />
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { Search, Refresh, MoreFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
+const router = useRouter()
 const resourceSearchQuery = ref('')
 
-// 100% 匹配还原图一原始快照真实通算数据集矩阵
 const tableRawDataset = ref([
-  { id: '1-2ze2awf50fszzvp7qq1z', name: 'FT_AUTO_ALI_20260531...', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.16.0.94', isContract: '否', demandUser: '测评中心' },
-  { id: 'i-2zehnnuzmb2te7mbo0rn', name: 'test-jacky', region: '--', cpu: '1核', memory: '2GB', intranetIp: '172.16.156.163', isContract: '否', demandUser: '测评中心' },
-  { id: '1-2zef1oxtc4jymmbr4lk8', name: 'jky0529', region: '--', cpu: '12核', memory: '96GB', intranetIp: '172.16.0.97', isContract: '否', demandUser: '测评中心' },
-  { id: 'i-2zehlr7vlhb57jisetavp', name: 'jacky-5-29-1', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.27.73.245', isContract: '否', demandUser: '测评中心' },
-  { id: 'i-2ze7zaybk0jq9ncyyy78d', name: 'FT_AUTO_ALI_20260528...', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.16.0.96', isContract: '否', demandUser: '测评中心' },
-  { id: 'i-2zeaoqk72sx43qujxohq', name: 'test-jacky3', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.27.73.247', isContract: '否', demandUser: '测评中心' },
-  { id: 'i-2zeaoqk72sx43qujxohp', name: 'test-jacky3', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.27.73.248', isContract: '否', demandUser: '测评中心' },
-  { id: 'i-2ze6apel786hftlm7px8', name: 'test-jacky2', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.27.73.246', isContract: '否', demandUser: '测评中心' },
-  { id: 'i-2zegs8nybtt1lp4lisex', name: 'test-jacky', region: '--', cpu: '2核', memory: '4GB', intranetIp: '172.27.73.245', isContract: '否', demandUser: '测评中心' },
-  { id: '1-2ze3f3087dj1wadkclad', name: 'fttest1230', region: '--', cpu: '2核', memory: '4GB', intranetIp: '172.16.0.99', isContract: '否', demandUser: '测评中心' }
+  { id: '1-2ze2awf50fszzvp7qq1z', name: 'FT_AUTO_ALI_20260531...', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.16.0.94', isContract: '否', demandUser: '测评中心', status: '运行中', systemDisk: '40GB' },
+  { id: 'i-2zehnnuzmb2te7mbo0rn', name: 'test-jacky', region: '--', cpu: '1核', memory: '2GB', intranetIp: '172.16.156.163', isContract: '否', demandUser: '测评中心', status: '运行中', systemDisk: '40GB' },
+  { id: '1-2zef1oxtc4jymmbr4lk8', name: 'jky0529', region: '--', cpu: '12核', memory: '96GB', intranetIp: '172.16.0.97', isContract: '否', demandUser: '测评中心', status: '已停止', systemDisk: '100GB' },
+  { id: 'i-2zehlr7vlhb57jisetavp', name: 'jacky-5-29-1', region: '--', cpu: '1核', memory: '1GB', intranetIp: '172.27.73.245', isContract: '否', demandUser: '测评中心', status: '运行中', systemDisk: '40GB' }
 ])
 
 const filteredTableData = computed(() => {
@@ -116,15 +109,33 @@ const filteredTableData = computed(() => {
   })
 })
 
-const handleSearch = () => { ElMessage.success('通算资产重构加载完成') }
+// 🚀 核心：赋予通算资源详情跳转与数据完美映射
+const goToDetailPage = (row: any) => {
+  router.push({
+    path: '/console/resource-detail',
+    query: {
+      id: row.id,
+      name: row.name,
+      status: row.status || '运行中',
+      intranetIp: row.intranetIp,
+      cpu: row.cpu,
+      memory: row.memory,
+      systemDisk: row.systemDisk || '--',
+      region: row.region || '--',
+      demander: row.demandUser || '测评中心',
+      provider: '阿里云' // 区分通算供给方
+    }
+  })
+}
+
+const handleSearch = () => { ElMessage.success('通算资产数据检索完毕') }
 const handleReset = () => { resourceSearchQuery.value = '' }
 const handleAction = (type: string, row: any) => { ElMessage.info(`触发 [${type}] 操作: ${row.name}`) }
-const handleMoreCommand = (cmd: string, row: any) => { ElMessage.success(`快捷指令: ${cmd} 目标: ${row.id}`) }
+const handleMoreCommand = (cmd: string, row: any) => { ElMessage.success(`快捷指令: ${cmd}`) }
 </script>
 
 <style scoped>
-.console-general-resource-page { display: flex; flex-direction: column; gap: 16px; width: 100%; box-sizing: border-box; }
-.search-filter-card-box { background-color: #ffffff; padding: 18px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); }
+.search-filter-card-box { background-color: #ffffff; padding: 18px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); margin-bottom: 16px; }
 .filter-layout-inline-row { display: flex; justify-content: space-between; align-items: center; }
 .filter-input-cell { display: flex; align-items: center; gap: 12px; }
 .filter-field-lbl { font-size: 14px; color: #4E5969; }
@@ -133,10 +144,7 @@ const handleMoreCommand = (cmd: string, row: any) => { ElMessage.success(`快捷
 .data-table-container-card { background-color: #ffffff; padding: 20px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); }
 .interactive-blue-link-lbl { color: #1677FF; cursor: pointer; }
 .interactive-blue-link-lbl:hover { text-decoration: underline; }
-
-/* 图一核心高保真还原点：粉色合同否定空心标签规范 */
-.pink-contract-status-tag-no { background-color: #FFF0F6; color: #EB2F96; border: 1px solid #FFADD2; padding: 1px 8px; border-radius: 2px; font-size: 12px; font-weight: 400; }
-
+.pink-contract-status-tag-no { background-color: #FFF0F6; color: #EB2F96; border: 1px solid #FFADD2; padding: 1px 8px; border-radius: 2px; font-size: 12px; }
 .table-inline-actions-flex { display: flex; align-items: center; gap: 12px; }
 .action-blue-link { color: #1677FF; cursor: pointer; font-size: 14px; }
 .more-action-trigger-dots { color: #86909C; cursor: pointer; display: flex; align-items: center; outline: none; }
