@@ -1,12 +1,19 @@
 // src/router/index.ts
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 const routes = [
-  // ==================== 顶级框架 C：前台展示系统 ====================
+  // 刚进入系统时，根路径默认重定向去前台大厅的首页
   {
     path: '/',
-    component: () => import('@/layout/index.vue'), // 使用带头部导航的公共外壳
-    redirect: '/home',
+    redirect: '/main/home'
+  },
+
+  // ==================== 顶级框架 C：前台展示系统 ====================
+  {
+    path: '/main',
+    component: () => import('@/layout/index.vue'), 
+    redirect: '/main/home', 
     children: [
       {
         path: 'home',
@@ -41,6 +48,14 @@ const routes = [
     ]
   },
 
+  // ==================== 🚀 独立登录页面框架 ====================
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue'), 
+    meta: { title: '登录' }
+  },
+
   // ==================== 顶级框架 A：控制台系统 ====================
   {
     path: '/console',
@@ -53,7 +68,6 @@ const routes = [
         component: () => import('@/views/console/Dashboard.vue'),
         meta: { title: '控制台首页' }
       },
-      // 🚀 核心对齐：将路由别名和路径完全适配 ConsoleLayout 中的侧边栏 index 属性
       {
         path: 'bms', 
         name: 'ResourceBMS',
@@ -150,14 +164,6 @@ const routes = [
         component: () => import('@/views/console/TicketDetail.vue'),
         meta: { title: '工单服务详情' }
       },
-            // src/router/index.ts 内部对应部分
-      {
-        path: 'order-apply',
-        name: 'OrderApply',
-        component: () => import('@/views/console/OrderManager.vue'),
-        meta: { title: '我的申请' }
-      },
-      // 🚀 追加此节点：开辟独立的详情页专属物理路径
       {
         path: 'apply-detail',
         name: 'ApplyDetail',
@@ -167,7 +173,7 @@ const routes = [
     ]
   },
 
-  // ==================== 顶级框架 B：平级独立的费用中心 ====================
+  // ==================== 顶级框架 B：费用中心 ====================
   {
     path: '/finance',
     component: () => import('@/layout/FinanceLayout.vue'),
@@ -198,12 +204,47 @@ const routes = [
         meta: { title: '合同管理详情' }
       }
     ]
+  },
+
+  // 兜底路径
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/main/home'
   }
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+// ==================== 全局路由前置守卫 ====================
+router.beforeEach((to, from, next) => {
+  const isLogged = localStorage.getItem('isPlatformLogged') === 'true'
+
+  if (to.path.startsWith('/console') || to.path.startsWith('/finance')) {
+    if (isLogged) {
+      next() 
+    } else {
+      ElMessage({
+        message: '登录已过期，请重新登录',
+        type: 'error',
+        duration: 3000,
+        showClose: true
+      })
+      next('/login') 
+    }
+  } 
+  else if (to.path === '/login') {
+    if (isLogged) {
+      next('/main/home') 
+    } else {
+      next() 
+    }
+  } 
+  else {
+    next()
+  }
 })
 
 export default router
