@@ -179,10 +179,27 @@ const create100PlusMessagesDataset = () => {
   return dataset
 }
 
-const globalMessagesMasterSource = ref(create100PlusMessagesDataset())
+// ========= 核心数据源加载与联动逻辑 =========
+const loadInitData = () => {
+  const localData = localStorage.getItem('platform_system_messages')
+  if (localData) {
+    return JSON.parse(localData)
+  }
+  const initData = create100PlusMessagesDataset()
+  localStorage.setItem('platform_system_messages', JSON.stringify(initData))
+  return initData
+}
+
+const globalMessagesMasterSource = ref(loadInitData())
+
+// 统一下发跨页面联动事件
+const syncAndNotify = () => {
+  localStorage.setItem('platform_system_messages', JSON.stringify(globalMessagesMasterSource.value))
+  window.dispatchEvent(new CustomEvent('update-message-bell-badge'))
+}
 
 const filteredMessageDataset = computed(() => {
-  return globalMessagesMasterSource.value.filter(item => {
+  return globalMessagesMasterSource.value.filter((item: any) => {
     const matchCat = !categoryFilter.value || item.category === categoryFilter.value
     const matchStatus = !statusFilter.value || item.status === statusFilter.value
     return matchCat && matchStatus
@@ -202,27 +219,40 @@ const handleTableSelectionChange = (val: any[]) => { selectedTableRows.value = v
 const handlePageSizeChange = (val: number) => { pageSize.value = val; currentPage.value = 1 }
 const handleCurrentPageChange = (val: number) => { currentPage.value = val }
 
+// ========= 已读状态变更，全部插入 syncAndNotify =========
 const toggleSingleRead = (row: any) => {
-  if (row.status === '未读') { row.status = '已读'; ElMessage.success('消息已标为阅读态') }
+  if (row.status === '未读') { 
+    row.status = '已读'
+    ElMessage.success('消息已标为阅读态') 
+    syncAndNotify()
+  }
 }
+
 const batchMarkAsRead = () => {
   selectedTableRows.value.forEach(row => { row.status = '已读' })
   ElMessage.success('选中的批量流水单号已全部切为已读')
+  syncAndNotify()
 }
+
 const allMarkAsRead = () => {
-  globalMessagesMasterSource.value.forEach(row => { row.status = '已读' })
+  globalMessagesMasterSource.value.forEach((row: any) => { row.status = '已读' })
   ElMessage.success('当前面板中所有未读通知已全局一键清空')
+  syncAndNotify()
 }
 
 // 🚀 核心改动点：详情点击动作流，同步切为阅读态并唤醒多态弹窗面板
 const checkMessageDetail = (row: any) => { 
-  row.status = '已读'
+  if (row.status === '未读') {
+    row.status = '已读'
+    syncAndNotify()
+  }
   activeMessageRow.value = row
   detailDialogVisible.value = true
 }
 </script>
 
 <style scoped>
+/* 这里也原封不动保留你的 CSS 样式，一行未动 */
 .console-message-center-dashboard-layout { display: flex; flex-direction: column; gap: 16px; width: 100%; box-sizing: border-box; }
 .message-filter-card-box { background-color: #ffffff; padding: 20px 24px 12px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); }
 .filter-layout-fields-inline-row { display: flex; align-items: center; width: 100%; margin-bottom: 16px; }

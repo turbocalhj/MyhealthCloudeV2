@@ -97,7 +97,7 @@
       ></span>
     </div>
 
-    <div class="view-all-link">
+    <div class="view-all-link" @click="$router.push('/main/market')" style="cursor: pointer;">
       <span>查看全部产品</span>
     </div>
   </div>
@@ -177,7 +177,8 @@
           />
         </div>
         
-        <div class="hero-card-body">
+        <div class="hero-card-body" @click="openPolicyLink('https://fzggw.zj.gov.cn/art/2025/5/16/art_1229629046_5509892.html')"
+  style="cursor: pointer;">
           <h3 class="policy-card-title">关于组织开展2025年人工智能券（算力券）兑付申报的通知</h3>
           <p class="policy-desc">各有关单位：根据国家相关通知要求，现面向全省开展2025年国家人工智能服务（算力券）兑付申报工作。现将有关事项通知如下：一、人工智能券（算力券）是国家使用超长期特别国债资金，试点推动形成人...</p>
           <div class="policy-meta-row">
@@ -268,9 +269,12 @@ interface ComputingProduct {
   ram: string
   disk: string
   price: number
-  isOutOfStock?: boolean 
+  isOutOfStock?: boolean
+   
 }
-
+const openPolicyLink = (url: string) => {
+  window.open(url, '_blank') // 在新标签页打开政策链接
+}
 const products = ref<ComputingProduct[]>([
   { id: 1, name: '联通裸金属新', marketTag: '市场算力', labels: ['自营算力', '萧山区', '资源充足'], gpuType: 'Huawei Atlas 300', gpuCount: '2 卡', memory: '64 GB', cpu: '128 核', ram: '512 GB', disk: '50 GB', price: 45689 },
   { id: 2, name: '联通裸金属GPU', marketTag: '市场算力', labels: ['自营算力', '拱墅区', '资源充足'], gpuType: 'Huawei Atlas 300', gpuCount: '1 卡', memory: '32 GB', cpu: '128 核', ram: '512 GB', disk: '50 GB', price: 343543 },
@@ -356,17 +360,54 @@ interface Policy {
   desc: string
   source: string
   date: string
+  url: string
 }
 
-const policies = ref<Policy[]>([
-  { id: 2, title: '浙江省人民政府印发关于支持人工智能创新发展...', desc: '为抢占人工智能发展制高点，打造全球人工智能创新发展高地，提出如下措施。一、发展目标 坚持创新驱动发展战略...', source: '浙江省人民政府', date: '2025-05-26' },
-  { id: 3, title: '杭州市经济信息局（市数字经济局）关于组织开展...', desc: '各区、县（市）经信局（发改经信局、经济科技局）：根据《杭州市人民政府办公厅关于加快推进人工智能产业高质量发展的通知》...', source: '杭州市经济和信息化局', date: '2025-03-28' },
-  { id: 4, title: '杭州市人民政府办公厅关于印发支持人工智能...', desc: '为抢抓人工智能新一轮发展机遇，积极实施"人工智能+"行动，推动杭州人工智能产业全产业链高质量发展特此...', source: '杭州市人民政府办公厅', date: '2024-07-23' }
+const policies = ref([
+  { 
+    id: 2, 
+    title: '浙江省人民政府印发关于支持人工智能创新发展...', 
+    desc: '为抢占人工智能发展制高点，打造全球人工智能创新发展高地，提出如下措施。一、发展目标 坚持创新驱动发展战略...', 
+    source: '浙江省人民政府', 
+    date: '2025-05-26',
+    url: 'https://www.zj.gov.cn/art/2025/5/16/art_1229017138_2555159.html'
+  },
+  { 
+    id: 3, 
+    title: '杭州市经济信息局（市数字经济局）关于组织开展...', 
+    desc: '各区、县（市）经信局（发改经信局、经济科技局）：根据《杭州市人民政府办公厅关于加快推进人工智能产业高质量发展的通知》...', 
+    source: '杭州市经济和信息化局', 
+    date: '2025-03-28',
+    url: 'https://jxj.hangzhou.gov.cn/art/2025/3/28/art_1229252271_4342196.html'
+  },
+  { 
+    id: 4, 
+    title: '杭州市人民政府办公厅关于印发支持人工智能...', 
+    desc: '为抢抓人工智能新一轮发展机遇，积极实施"人工智能+"行动，推动杭州人工智能产业全产业链高质量发展特此...', 
+    source: '杭州市人民政府办公厅', 
+    date: '2024-07-23',
+    url: 'https://www.hangzhou.gov.cn/art/2024/7/23/art_1229063382_1844867.html'
+  },
+  { 
+    id: 5, 
+    title: '关于组织开展2025年人工智能券（算力券）', 
+    desc: '各有关单位：根据国家相关通知要求，现面向全省开展2025年国家人工智能服务（算力券）兑付申报工作...', 
+    source: '浙江省发展和改革委员会', 
+    date: '2025-05-16',
+    url: 'https://fzggw.zj.gov.cn/art/2025/5/16/art_1229629046_5509892.html'
+  }
 ])
 
 const handlePolicyLink = (id: number) => {
-  console.log('正在准备去往外部站点，政策条目ID:', id)
+  // 通过传入的 id，在数组中找到对应的 policy 对象
+  const targetPolicy = policies.value.find(p => p.id === id)
+  
+  if (targetPolicy && targetPolicy.url) {
+    // 在新标签页打开对应的链接
+    window.open(targetPolicy.url, '_blank')
+  }
 }
+
 </script>
 
 <style scoped>

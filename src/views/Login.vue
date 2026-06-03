@@ -3,7 +3,7 @@
     <div class="login-box">
       <div class="login-header">
         <h2>算力调度运营平台</h2>
-        <p>用户登录认证中心</p>
+      
       </div>
 
       <el-form :model="loginForm" :rules="rules" ref="loginFormRef" size="large">
@@ -89,7 +89,10 @@ const handleLogin = async () => {
 .login-wrapper {
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background-image: url('@/views/images/Banner.png');
+  background-size: cover;          /* 覆盖整个区域，保持比例 */
+  background-position: center;     /* 居中显示 */
+  background-repeat: no-repeat;    /* 不平铺 */
   display: flex;
   justify-content: center;
   align-items: center;

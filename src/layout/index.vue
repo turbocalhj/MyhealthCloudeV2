@@ -3,7 +3,7 @@
     <el-container>
       <el-header class="custom-header">
         <div class="header-left">
-          <div class="logo">算力调度运营平台</div>
+          <div class="logo" @click="router.push('/main/home')" style="cursor: pointer;">算力调度运营平台</div>
           
           <el-menu
             :key="isLogged ? 'logged' : 'unlogged'"
@@ -21,12 +21,15 @@
         </div>
 
         <div class="header-right">
+          
+          <span class="tool-link" @click="cartDrawerVisible = true" title="购物车">
+            <el-icon :size="18"><ShoppingCart /></el-icon>
+          </span>
+
           <span class="tool-link" @click="drawerVisible = true">文档</span>
           
           <el-dropdown trigger="hover" @command="handleTicketCommand">
-            <span class="tool-link dropdown-link">
-              工单 <el-icon class="el-icon--right"><arrow-down /></el-icon>
-            </span>
+            <span class="tool-link dropdown-link">工单</span>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="/console/ticket-create">创建工单</el-dropdown-item>
@@ -36,18 +39,54 @@
           </el-dropdown>
           
           <template v-if="isLogged">
-            <span class="tool-link" @click="router.push('/console/dashboard')">控制台</span>
-            <el-badge :value="58" class="msg-badge">
-              <span class="tool-link">消息</span>
-            </el-badge>
-            <div class="user-profile" @click="handleLogout">
-              <el-avatar :size="28" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
-              <span class="username">测评中心</span>
-              <span class="tool-link" style="margin-left: 6px; font-size: 12px; color: #f56c6c;">(退出)</span>
-            </div>
+            <span class="tool-link" @click="handleConsoleClick">控制台</span>
+            
+            <el-dropdown trigger="hover" placement="bottom-end" @command="handleMessageDropdown">
+              <el-badge :value="unreadCount" :max="99" :hidden="unreadCount === 0" class="msg-badge">
+                <span class="tool-link">消息</span>
+              </el-badge>
+              <template #dropdown>
+                <el-dropdown-menu class="custom-msg-dropdown">
+                  <div class="msg-dropdown-header">未读消息</div>
+                  <template v-if="unreadList.length > 0">
+                    <el-dropdown-item v-for="item in unreadList.slice(0, 5)" :key="item.id" command="goMessageCenter" class="msg-item">
+                      <div class="msg-item-title">{{ item.title }}</div>
+                      <div class="msg-item-time">{{ item.time }}</div>
+                    </el-dropdown-item>
+                    <div class="msg-dropdown-footer" @click="router.push('/console/message')">查看全部消息</div>
+                  </template>
+                  <template v-else>
+                    <div class="msg-empty-box">
+                      <el-empty :image-size="40" description="暂无未读消息" />
+                    </div>
+                  </template>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+
+            <el-dropdown trigger="hover" placement="bottom-end" @command="handleUserDropdown">
+              <div class="user-profile custom-hover-profile">
+                <svg class="avatar-svg" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M512 512a192 192 0 1 0 0-384 192 192 0 0 0 0 384z m0 64c-143.6 0-448 72.2-448 215.4V832h896v-40.6c0-143.2-304.4-215.4-448-215.4z" />
+                </svg>
+                <span class="username">测评中心</span>
+              </div>
+              <template #dropdown>
+                <el-dropdown-menu class="user-dropdown-menu">
+                  <el-dropdown-item command="/console/dashboard">控制台首页</el-dropdown-item>
+                  <el-dropdown-item command="/console/bms">裸金属服务</el-dropdown-item>
+                  <el-dropdown-item command="/console/ecs">云主机服务</el-dropdown-item>
+                  <el-dropdown-item command="/console/container">容器服务</el-dropdown-item>
+                  <el-dropdown-item command="/console/order-apply">我的申请</el-dropdown-item>
+                  <el-dropdown-item disabled class="disabled-menu-item">账户设置</el-dropdown-item>
+                  <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
 
           <template v-else>
+            <span class="tool-link" style="margin-right: 20px;" @click="handleConsoleClick">控制台</span>
             <el-button type="primary" size="default" @click="router.push('/login')">登录</el-button>
           </template>
         </div>
@@ -73,32 +112,47 @@
         ></iframe>
       </div>
     </el-drawer>
+
+    <el-drawer
+      v-model="cartDrawerVisible"
+      title="资源申请列表"
+      direction="rtl"
+      size="400px"
+      :destroy-on-close="true"
+      class="cart-drawer"
+    >
+      <div class="cart-drawer-content">
+        <el-empty description="暂未添加任何资源" />
+      </div>
+      <template #footer>
+        <div class="cart-footer-actions">
+          <el-button @click="cartDrawerVisible = false">关闭</el-button>
+          <el-button type="primary">去结算</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus' // 💡 引入 ElMessageBox 弹框核心组件
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus' 
+import { ArrowDown, ShoppingCart } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
 
-// 响应式维护用户登录状态
 const isLogged = ref(false)
-
-// 响应式维护右侧文档抽屉半框的显隐状态
 const drawerVisible = ref(false)
+const cartDrawerVisible = ref(false) // 购物车抽屉可见性控制
 
-// 动态计算当前激活的菜单项，保证刷新页面后高亮状态不丢失
 const activeMenu = computed(() => {
   if (!route || !route.path) return '/main/home'
   if (route.path === '/' || route.path === '/main') return '/main/home'
   return route.path
 })
 
-// 监听路由路径，实时同步缓存中的登录标记
 watch(
   () => route.path,
   () => {
@@ -107,39 +161,78 @@ watch(
   { immediate: true }
 )
 
-/**
- * 🌟 核心修改：悬浮菜单点击后的权限拦截与带【立即登录】的确认弹框逻辑
- * @param command 点击菜单项传过来的目标控制台路由路径
- */
-const handleTicketCommand = (command: string) => {
-  const isLoggedNow = localStorage.getItem('isPlatformLogged') === 'true'
+const unreadCount = ref(0)
+const unreadList = ref<any[]>([])
 
-  if (isLoggedNow) {
-    // 1. 已登录：直接顺畅推入控制台对应功能区
-    router.push(command)
-  } else {
-    // 2. 未登录（升级版）：精准拉出带【立即登录】和【取消】按钮的定制提示弹框（满足图示效果）
-    ElMessageBox.confirm(
-      '登录已过期，请重新登录',
-      '提示',
-      {
-        confirmButtonText: '立即登录',
-        cancelButtonText: '取消',
-        type: 'error',
-        center: false // 保持传统的左对齐
-      }
-    )
-    .then(() => {
-      // 💡 点击【立即登录】后的业务行为：直接无缝跳转到登录页面框架
-      router.push('/login')
-    })
-    .catch(() => {
-      // 点击取消：安静关闭弹框，留在首页原地，不做任何破坏性动作
-    })
+const syncMessageStatus = () => {
+  const localData = localStorage.getItem('platform_system_messages')
+  if (localData) {
+    const allMsgs = JSON.parse(localData)
+    unreadList.value = allMsgs.filter((m: any) => m.status === '未读')
+    unreadCount.value = unreadList.value.length
   }
 }
 
-// 退出登录方法
+onMounted(() => {
+  syncMessageStatus()
+  window.addEventListener('storage', syncMessageStatus)
+  window.addEventListener('update-message-bell-badge', syncMessageStatus)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('storage', syncMessageStatus)
+  window.removeEventListener('update-message-bell-badge', syncMessageStatus)
+})
+
+const handleMessageDropdown = (command: string) => {
+  if (command === 'goMessageCenter') {
+    router.push('/console/message')
+  }
+}
+
+const handleUserDropdown = (command: string) => {
+  if (command === 'logout') {
+    handleLogout()
+  } else if (command) {
+    router.push(command)
+  }
+}
+
+const handleConsoleClick = () => {
+  const isLoggedNow = localStorage.getItem('isPlatformLogged') === 'true'
+  if (isLoggedNow) {
+    router.push('/console/bms')
+  } else {
+    triggerAuthBox()
+  }
+}
+
+const handleTicketCommand = (command: string) => {
+  const isLoggedNow = localStorage.getItem('isPlatformLogged') === 'true'
+  if (isLoggedNow) {
+    router.push(command)
+  } else {
+    triggerAuthBox()
+  }
+}
+
+const triggerAuthBox = () => {
+  ElMessageBox.confirm(
+    '登录已过期，请重新登录',
+    '提示',
+    {
+      confirmButtonText: '立即登录',
+      cancelButtonText: '取消',
+      type: 'error',
+      center: false
+    }
+  )
+  .then(() => {
+    router.push('/login')
+  })
+  .catch(() => {})
+}
+
 const handleLogout = () => {
   localStorage.removeItem('isPlatformLogged')
   localStorage.removeItem('token')
@@ -206,12 +299,13 @@ const handleLogout = () => {
 
 .tool-link {
   font-size: 14px;
-  color: #666;
+  color: #000000;
   cursor: pointer;
   transition: color 0.3s;
   display: inline-flex;
   align-items: center;
   outline: none;
+  
 }
 
 .tool-link:hover, .dropdown-link:hover {
@@ -236,7 +330,8 @@ const handleLogout = () => {
 
 .username {
   font-size: 14px;
-  color: #333;
+  color: #000000;
+  transition: color 0.3s;
 }
 
 .custom-main {
@@ -245,6 +340,7 @@ const handleLogout = () => {
   min-height: calc(100vh - 60px);
 }
 
+/* ================== 抽屉及文档容器 ================== */
 .drawer-iframe-container {
   width: 100%;
   height: calc(100vh - 80px);
@@ -257,7 +353,98 @@ const handleLogout = () => {
   border: none;
 }
 
+.cart-drawer-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.cart-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
 :deep(.el-drawer__body) {
   padding: 0 !important;
+}
+
+/* ================== 悬浮与下拉样式 ================== */
+
+.avatar-svg {
+  width: 24px;
+  height: 24px;
+  fill: #000000;
+  transition: fill 0.3s;
+}
+
+.custom-hover-profile:hover .username {
+  color: #409eff !important;
+}
+
+.custom-hover-profile:hover .avatar-svg {
+  fill: #409eff !important;
+}
+
+.user-dropdown-menu {
+  width: 160px;
+}
+
+.disabled-menu-item {
+  color: #c0c4cc !important;
+  cursor: not-allowed !important;
+  background-color: transparent !important;
+}
+
+.custom-msg-dropdown {
+  width: 280px;
+  padding: 8px 0;
+}
+
+.msg-dropdown-header {
+  padding: 8px 16px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.msg-item {
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start !important;
+  gap: 4px;
+}
+
+.msg-item-title {
+  font-size: 13px;
+  color: #606266;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.msg-item-time {
+  font-size: 11px;
+  color: #909399;
+}
+
+.msg-dropdown-footer {
+  text-align: center;
+  padding: 10px 0 4px;
+  font-size: 13px;
+  color: #409eff;
+  cursor: pointer;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 4px;
+}
+
+.msg-empty-box {
+  padding: 20px 0;
 }
 </style>
