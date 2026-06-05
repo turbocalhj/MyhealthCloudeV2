@@ -238,7 +238,7 @@ const router = createRouter({
 let hasAddedRoutes = false
 
 // ==================== 全局路由前置守卫 (JWT + 动态路由鉴权) ====================
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   // 引入真实 JWT Token 校验机制（替代明文判断）
   const token = localStorage.getItem('accessToken')
 
@@ -251,11 +251,11 @@ router.beforeEach((to, from, next) => {
       next('/main/home')
     } else {
       if (!hasAddedRoutes) {
-        // 🚨 RBAC 核心：如果没有挂载过动态路由，根据当前用户权限动态挂载
+        // RBAC 核心：如果没有挂载过动态路由，根据当前用户权限动态挂载
         try {
           // 这里可以获取 localStorage 中存的用户角色，或者请求接口。假设这里读取到了角色:
-          const userRolesStr = localStorage.getItem('userRoles')
-          const roles = userRolesStr ? JSON.parse(userRolesStr) : ['user']
+          //const userRolesStr = localStorage.getItem('userRoles')
+          //  const roles = userRolesStr ? JSON.parse(userRolesStr) : ['user']
 
           // 遍历并动态注入具备权限的路由
           asyncRoutes.forEach(route => {
@@ -278,7 +278,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    // ⚠️ 没有 Token 的情况
+    //  没有 Token 的情况
     if (requireAuth) {
       ElMessage({
         message: '登录已过期或无权限，请重新登录',

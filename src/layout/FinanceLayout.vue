@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-// 🚀 核心修复：显示注册图标，防止运行时组件未定义而白屏
+// 核心修复：显示注册图标，防止运行时组件未定义而白屏
 import { Document, CreditCard, Files } from '@element-plus/icons-vue'
 </script>
 

@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import type { MessageItem } from '@/types' // 🚀 引入严格类型
 
 export const useUserStore = defineStore('user', () => {
-  // 🚀 替换 any[]
+  // 替换 any[]
   const unreadList = ref<MessageItem[]>([])
 
   const unreadCount = computed(() => unreadList.value.length)

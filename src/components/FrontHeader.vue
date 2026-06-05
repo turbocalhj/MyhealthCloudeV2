@@ -202,7 +202,7 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
-/* 🚀 Header 相关的 CSS 从 layout 完美迁移到独立组件 */
+/* Header 相关的 CSS 从 layout 完美迁移到独立组件 */
 .custom-header {
     /* 🌟 新增：粘性定位三剑客，让导航栏永远吸附在顶部 */
   position: sticky;

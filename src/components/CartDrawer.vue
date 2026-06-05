@@ -78,7 +78,7 @@ const handleCheckout = () => {
 </script>
 
 <style scoped>
-/* 🚀 P4 CSS 变量全面替换，不改变任何视觉呈现 */
+/* P4 CSS 变量全面替换，不改变任何视觉呈现 */
 :deep(.el-drawer__body) {
   padding: 0 !important;
   background-color: var(--pc-bg-page);
