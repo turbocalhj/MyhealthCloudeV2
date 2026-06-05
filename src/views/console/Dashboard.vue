@@ -1,4 +1,5 @@
 <template>
+  <!-- 控制台首页模块：用户核心资产的查询、筛选、详情查看 -->
   <div class="console-dashboard-page">
     <div class="search-filter-card">
       <div class="filter-row">

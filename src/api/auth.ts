@@ -8,7 +8,7 @@ import request from '@/utils/request'
  * }
  */
 
-// 🚀 当前前端工程化演进阶段，我们导出一个包裹了 Promise 的 Mock 函数，完美模拟网络请求的异步行为
+//  当前前端工程化演进阶段，我们导出一个包裹了 Promise 的 Mock 函数，完美模拟网络请求的异步行为
 export function loginApi(data: any) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {

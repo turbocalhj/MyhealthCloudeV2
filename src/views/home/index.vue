@@ -1,4 +1,5 @@
 <template>
+  <!-- 首页模块：平台主入口，展示Banner轮播、算力产品列表、供给方入驻引导 -->
   <div class="banner-container">
     <div class="banner-background">
       <img src="@/assets/images/home/Banner.png" alt="Banner图" class="banner-image" />

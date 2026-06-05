@@ -1,4 +1,5 @@
 <template>
+  <!-- 算力超市模块：算力资源的多维度筛选、浏览、选购 -->
   <div class="market-page-wrapper">
     
     <div v-if="isFixedTop" class="filter-placeholder-bar"></div>

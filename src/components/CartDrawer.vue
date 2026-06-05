@@ -1,4 +1,5 @@
 <template>
+  <!-- 购物车抽屉模块：展示用户已加入购物车的算力资源的列表 -->
   <el-drawer
     v-model="cartStore.cartDrawerVisible"
     title="购物车与资源申请列表"
@@ -40,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+// 购物车模块：管理算力资源的暂存、结算流程
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
@@ -64,7 +66,7 @@ const handleCheckout = () => {
     return
   }
 
-  // 🚀 防抖与 Loading 交互优化
+  // 防抖与Loading交互优化
   if (checkoutLoading.value) return
   checkoutLoading.value = true
   

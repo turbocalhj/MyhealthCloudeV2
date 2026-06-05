@@ -1,15 +1,18 @@
-// src/store/modules/cart.ts
+// 购物车状态管理模块
+// 功能：管理购物车中的算力资源列表，支持添加、删除、清空、持久化存储
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import type { CartItem } from '@/types' // 🚀 引入严格类型
+import type { CartItem } from '@/types'
 
 export const useCartStore = defineStore('cart', () => {
-  // 🚀 替换 any[]
+  // 替换 any[]
   const cartItems = ref<CartItem[]>([])
   const cartDrawerVisible = ref(false)
 
+  // 购物车内商品总数
   const totalCount = computed(() => cartItems.value.length)
+  // 购物车总价计算
   const totalPrice = computed(() => {
     return cartItems.value.reduce((total, item) => total + (item.price || 0), 0)
   })
@@ -21,7 +24,7 @@ export const useCartStore = defineStore('cart', () => {
     cartDrawerVisible.value = false
   }
 
-  // 🚀 替换 any
+  // 添加商品到购物车
   const addCartItem = (product: CartItem) => {
     const isExist = cartItems.value.find((item) => item.id === product.id)
     if (isExist) {

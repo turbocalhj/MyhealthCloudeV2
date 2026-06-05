@@ -1,4 +1,5 @@
-// src/main.ts
+// 算力调度运营平台 - 主入口文件
+// 功能：初始化Vue应用、配置路由、状态管理、UI组件库
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'

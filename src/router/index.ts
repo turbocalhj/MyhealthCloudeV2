@@ -1,14 +1,15 @@
-// src/router/index.ts
+// 路由配置文件
+// 功能：管理整个平台的路由映射，包含前台展示、后台管理、财务管理等模块的路由定义
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
-// ==================== 1. 静态路由 (白名单路由，无需动态权限) ====================
+// 前台展示系统路由（无需权限）
 const constantRoutes = [
   {
     path: '/',
     redirect: '/main/home'
   },
-  // 顶级框架 C：前台展示系统
+  // 前台展示主框架
   {
     path: '/main',
     component: () => import('@/layout/index.vue'), 
@@ -58,23 +59,23 @@ const constantRoutes = [
       }
     ]
   },
-  // 独立登录页面框架
+  // 独立登录页面
   {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'), 
     meta: { title: '登录' }
   },
-  // 兜底路径 (必须放在最后，等待动态路由挂载完毕后再起作用)
+  // 兜底路径
   {
     path: '/:pathMatch(.*)*',
     redirect: '/main/home'
   }
 ]
 
-// ==================== 2. 动态路由 (后台系统，需根据 Token 和权限动态挂载) ====================
+// 后台管理系统路由（需根据Token和权限动态挂载）
 export const asyncRoutes = [
-  // 顶级框架 A：控制台系统
+  // 控制台主框架
   {
     path: '/console',
     name: 'ConsoleLayout',

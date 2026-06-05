@@ -1,4 +1,5 @@
 <template>
+  <!-- 登录模块：用户身份认证入口 -->
   <div class="login-wrapper">
     <div class="login-box">
       <div class="login-header">
@@ -7,15 +8,11 @@
 
       <el-form :model="loginForm" :rules="rules" ref="loginFormRef" size="large">
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" placeholder="请输入用户名">
-            <template #prefix>👤</template>
-          </el-input>
+          <el-input v-model="loginForm.username" placeholder="请输入用户名" />
         </el-form-item>
 
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" type="password" show-password placeholder="请输入密码">
-            <template #prefix>🔒</template>
-          </el-input>
+          <el-input v-model="loginForm.password" type="password" show-password placeholder="请输入密码" />
         </el-form-item>
 
         <el-form-item>
@@ -29,11 +26,12 @@
 </template>
 
 <script setup lang="ts">
+// 登录逻辑：表单验证、调用认证API、存储Token、路由跳转
 import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
-import { loginApi } from '@/api/auth' // 🚀 引入剥离好的 API 模块
+import { loginApi } from '@/api/auth'
 
 const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
@@ -59,7 +57,7 @@ const handleLogin = async () => {
       loading.value = true
       
       try {
-        // 🚀 核心重构：使用 try-catch 和 await 处理真实的异步 API 请求
+        // 调用登录API，获取Token和用户角色
         const res: any = await loginApi(loginForm)
         
         // 登录成功后存储鉴权信息

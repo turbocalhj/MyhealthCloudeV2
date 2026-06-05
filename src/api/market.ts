@@ -31,7 +31,7 @@ export interface ComputingProduct {
  * }
  */
 
-// 🚀 将原本写死在 Vue 组件里的 Mock 数据生成逻辑，彻底剥离到 API 数据层处理
+//  将原本写死在 Vue 组件里的 Mock 数据生成逻辑，彻底剥离到 API 数据层处理
 export function fetchMarketProducts() {
   return new Promise<ComputingProduct[]>((resolve) => {
     setTimeout(() => {
