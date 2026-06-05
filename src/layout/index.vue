@@ -22,9 +22,11 @@
 
         <div class="header-right">
           
-          <span class="tool-link" @click="cartDrawerVisible = true" title="购物车">
-            <el-icon :size="18"><ShoppingCart /></el-icon>
-          </span>
+          <el-badge :value="cartItems.length" :max="99" :hidden="cartItems.length === 0" class="msg-badge">
+            <span class="tool-link" @click="cartDrawerVisible = true" title="购物车">
+              <el-icon :size="18"><ShoppingCart /></el-icon>
+            </span>
+          </el-badge>
 
           <span class="tool-link" @click="drawerVisible = true">文档</span>
           
@@ -115,19 +117,39 @@
 
     <el-drawer
       v-model="cartDrawerVisible"
-      title="资源申请列表"
+      title="购物车与资源申请列表"
       direction="rtl"
-      size="400px"
+      size="420px"
       :destroy-on-close="true"
       class="cart-drawer"
     >
       <div class="cart-drawer-content">
-        <el-empty description="暂未添加任何资源" />
+        <template v-if="cartItems.length > 0">
+          <div class="cart-list">
+            <div v-for="(item, index) in cartItems" :key="item.id + '-' + index" class="cart-card">
+              <el-icon class="cart-delete-btn" @click="removeCartItem(index)"><Close /></el-icon>
+              <div class="cart-item-title">{{ item.name }}</div>
+              <div class="cart-item-specs">
+                <span>{{ item.gpuType }}</span> | <span>{{ item.gpuCount }}</span>
+              </div>
+              <div class="cart-item-bottom">
+                <span class="provider-tag">{{ item.marketTag }}</span>
+                <span class="cart-item-price">¥{{ item.price.toLocaleString() }}<span class="unit">{{ item.priceUnit }}</span></span>
+              </div>
+            </div>
+          </div>
+        </template>
+        <div v-else class="empty-cart-box">
+          <el-empty description="您的购物车空空如也，快去选购吧" />
+        </div>
       </div>
       <template #footer>
         <div class="cart-footer-actions">
+          <div class="cart-total" v-if="cartItems.length > 0">
+            预估总计: <span class="total-price">¥{{ cartTotalPrice.toLocaleString() }}</span>
+          </div>
           <el-button @click="cartDrawerVisible = false">关闭</el-button>
-          <el-button type="primary">去结算</el-button>
+          <el-button type="primary" @click="handleCheckout" :disabled="cartItems.length === 0">去结算</el-button>
         </div>
       </template>
     </el-drawer>
@@ -138,14 +160,14 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus' 
-import { ArrowDown, ShoppingCart } from '@element-plus/icons-vue'
+import { ArrowDown, ShoppingCart, Close } from '@element-plus/icons-vue' // 引入Close图标
 
 const route = useRoute()
 const router = useRouter()
 
 const isLogged = ref(false)
 const drawerVisible = ref(false)
-const cartDrawerVisible = ref(false) // 购物车抽屉可见性控制
+const cartDrawerVisible = ref(false)
 
 const activeMenu = computed(() => {
   if (!route || !route.path) return '/main/home'
@@ -173,15 +195,58 @@ const syncMessageStatus = () => {
   }
 }
 
+// 👇 新增：购物车数据状态管理与同步逻辑
+const cartItems = ref<any[]>([])
+
+const syncCartStatus = () => {
+  const localCart = localStorage.getItem('platform_cart')
+  if (localCart) {
+    cartItems.value = JSON.parse(localCart)
+  } else {
+    cartItems.value = []
+  }
+}
+
+const openCartDrawer = () => {
+  cartDrawerVisible.value = true
+}
+
+const removeCartItem = (index: number) => {
+  cartItems.value.splice(index, 1)
+  localStorage.setItem('platform_cart', JSON.stringify(cartItems.value))
+  window.dispatchEvent(new Event('sync-cart')) // 触发全局同步
+  ElMessage.success('已移出购物车')
+}
+
+const handleCheckout = () => {
+  const isLoggedNow = localStorage.getItem('isPlatformLogged') === 'true'
+  if (!isLoggedNow) {
+    cartDrawerVisible.value = false
+    triggerAuthBox()
+    return
+  }
+  ElMessage.success('订单结算功能正在建设中...')
+}
+
+const cartTotalPrice = computed(() => {
+  // 简单计算总价（无视时长单位差异，仅作演示）
+  return cartItems.value.reduce((total, item) => total + (item.price || 0), 0)
+})
+
 onMounted(() => {
   syncMessageStatus()
+  syncCartStatus() // 挂载时读取购物车
   window.addEventListener('storage', syncMessageStatus)
   window.addEventListener('update-message-bell-badge', syncMessageStatus)
+  window.addEventListener('sync-cart', syncCartStatus) // 监听智算超市触发的更新
+  window.addEventListener('open-cart-drawer', openCartDrawer) // 监听“立即购买”触发的抽屉
 })
 
 onUnmounted(() => {
   window.removeEventListener('storage', syncMessageStatus)
   window.removeEventListener('update-message-bell-badge', syncMessageStatus)
+  window.removeEventListener('sync-cart', syncCartStatus)
+  window.removeEventListener('open-cart-drawer', openCartDrawer)
 })
 
 const handleMessageDropdown = (command: string) => {
@@ -246,6 +311,7 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
+/* 原有布局样式 */
 .layout-wrapper {
   height: 100vh;
   display: flex;
@@ -305,7 +371,6 @@ const handleLogout = () => {
   display: inline-flex;
   align-items: center;
   outline: none;
-  
 }
 
 .tool-link:hover, .dropdown-link:hover {
@@ -340,7 +405,6 @@ const handleLogout = () => {
   min-height: calc(100vh - 60px);
 }
 
-/* ================== 抽屉及文档容器 ================== */
 .drawer-iframe-container {
   width: 100%;
   height: calc(100vh - 80px);
@@ -352,29 +416,6 @@ const handleLogout = () => {
   height: 100%;
   border: none;
 }
-
-.cart-drawer-content {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-.cart-footer-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
-}
-
-:deep(.el-drawer__body) {
-  padding: 0 !important;
-}
-
-/* ================== 悬浮与下拉样式 ================== */
 
 .avatar-svg {
   width: 24px;
@@ -446,5 +487,121 @@ const handleLogout = () => {
 
 .msg-empty-box {
   padding: 20px 0;
+}
+
+/* 👇 新增购物车专用样式 */
+:deep(.cart-drawer .el-drawer__body) {
+  padding: 0 !important;
+  background-color: #f7f9fc;
+}
+
+.cart-drawer-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.cart-list {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cart-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #eef2f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  transition: transform 0.2s ease;
+}
+
+.cart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cart-delete-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #bfbfbf;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.cart-delete-btn:hover {
+  color: #ff4d4f;
+}
+
+.cart-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 8px;
+  padding-right: 24px;
+  line-height: 1.4;
+}
+
+.cart-item-specs {
+  font-size: 13px;
+  color: #8c8c8c;
+  margin-bottom: 12px;
+}
+
+.cart-item-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.provider-tag {
+  background: #e6f4ff;
+  color: #1677FF;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.cart-item-price {
+  color: #ff9900;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.cart-item-price .unit {
+  font-size: 12px;
+  color: #8c8c8c;
+  font-weight: normal;
+}
+
+.empty-cart-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.cart-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.cart-total {
+  position: absolute;
+  left: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.cart-total .total-price {
+  color: #ff9900;
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 4px;
 }
 </style>

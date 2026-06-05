@@ -224,8 +224,8 @@
 
           <div class="card-actions">
             <template v-if="!product.isOutOfStock">
-              <el-button size="small" class="add-cart-btn">加入购物车</el-button>
-              <el-button type="primary" size="small" class="buy-now-btn">立即购买</el-button>
+              <el-button size="small" class="add-cart-btn" @click="handleAddToCart(product)">加入购物车</el-button>
+              <el-button type="primary" size="small" class="buy-now-btn" @click="handleBuyNow(product)">立即购买</el-button>
             </template>
             <template v-else>
               <el-button size="small" class="stockout-btn" disabled>暂无库存</el-button>
@@ -251,6 +251,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted, watch, computed } from 'vue'
 import { Filter, ArrowUp, Search, Loading } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus' // 引入提示框
 import type { CheckboxValueType } from 'element-plus'
 
 interface ComputingProduct {
@@ -368,6 +369,38 @@ const generateMockData = () => {
   }
 }
 
+// 👇 新增：写入购物车的复用逻辑
+const pushToCartStore = (product: ComputingProduct): boolean => {
+  const localStr = localStorage.getItem('platform_cart')
+  const cartList = localStr ? JSON.parse(localStr) : []
+  
+  // 查重：避免同一台机器被重复加多次
+  const isExist = cartList.find((item: any) => item.id === product.id)
+  if (isExist) {
+    ElMessage.warning('该资源已在购物车中，请勿重复添加')
+    return false
+  }
+
+  cartList.push(product)
+  localStorage.setItem('platform_cart', JSON.stringify(cartList))
+  
+  // 分发事件通知 header 组件刷新徽标
+  window.dispatchEvent(new Event('sync-cart'))
+  return true
+}
+
+const handleAddToCart = (product: ComputingProduct) => {
+  if (pushToCartStore(product)) {
+    ElMessage.success('成功加入购物车！')
+  }
+}
+
+const handleBuyNow = (product: ComputingProduct) => {
+  pushToCartStore(product) // 存在也没关系，静默跳过即可
+  // 无论如何，直接通知 layout 打开购物车侧边栏
+  window.dispatchEvent(new Event('open-cart-drawer'))
+}
+
 const handleSourceSelfAllChange = (val: any) => {
   filterForm.sourceSelf = val ? ['推理', '训练'] : []
 }
@@ -483,12 +516,10 @@ const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
 }
 
-// 🚀 核心控制逻辑微调：降低吸顶临界触敏度，完美配合系统导航栏
 const handleMarketScroll = () => {
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop
   if (isFirstRender.value) return
 
-  // 判定是否达到物理吸顶临界点
   if (scrollTop > 100) {
     isFixedTop.value = true
     isCollapsed.value = true 
@@ -536,541 +567,81 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* ==========================================================================
-   全局容器与布局基调（修正对齐类名，确保 1600px 严格锁定居中）
-   ========================================================================== */
-.market-page-wrapper {
-  width: 1600px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 30px;
-  padding-bottom: 80px;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* 🚀 新增物理占位符样式：高度完全对齐折叠筛选栏的物理尺寸，防止下方内容闪烁突变 */
-.filter-placeholder-bar {
-  width: 100%;
-  height: 58px; 
-  margin-bottom: 30px;
-  box-sizing: border-box;
-}
-
-/* ==========================================================================
-   模块 1：可折叠高级动效筛选框（阶梯悬浮，绝对不会遮挡/冲撞导航栏）
-   ========================================================================== */
-.filter-wrapper {
-  width: 100%;
-  background: #FFFFFF;
-  border-radius: 12px;
-  border: 1px solid #eef2f6;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
-  margin-bottom: 30px;
-  box-sizing: border-box;
-  transition: box-shadow 0.3s ease, border-radius 0.2s ease;
-}
-
-/* 🚀 核心重写：为了配合上一层不确定的 Header 定位，直接挂载到 top: 0，或者根据你的 Header 高度设为 64px */
-.filter-fixed-top {
-  position: fixed;
-  top: 64px; 
-  left: 50%;
-  transform: translateX(-50%); 
-  width: 1600px; 
-  z-index: 999; /* 降低一点层级，防止把更上层的“全局大导航下拉菜单”盖住 */
-  border-radius: 0 0 12px 12px;
-  border-top: none;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(10px);
-}
-
-.filter-slide-in {
-  animation: filterSlideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes filterSlideDown {
-  0% {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
-
-/* 当处于固定吸顶流中，动画帧需特殊维持水平居中平组 */
-.filter-fixed-top.filter-slide-in {
-  animation: filterSlideFixedDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes filterSlideFixedDown {
-  0% {
-    transform: translate3d(-50%, -20px, 0);
-    opacity: 0;
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-    opacity: 1;
-  }
-}
-
-.filter-wrapper:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-}
-
-.filter-container {
-  padding-left: 24px;
-  padding-right: 24px;
-  padding-bottom: 16px;
-}
-
-.filter-fixed-top .filter-container {
-  padding-bottom: 0px; 
-}
-
-.filter-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 20px;
-  padding-bottom: 16px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.filter-fixed-top .filter-header {
-  padding-top: 16px;
-  padding-bottom: 16px;
-}
-
-.filter-header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.filter-icon {
-  color: #1677FF;
-  font-size: 18px;
-}
-
-.filter-title-text {
-  font-size: 16px;
-  font-weight: 600;
-  color: #262626;
-}
-
-.arrow-rotate {
-  transform: rotate(180deg);
-  transition: transform 0.3s ease;
-}
-
-.filter-body {
-  border-top: 1px solid #f0f0f0;
-  padding-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.filter-row {
-  display: flex;
-  align-items: flex-start;
-  min-height: 40px;
-}
-
-.row-label {
-  width: 100px;
-  color: #262626;
-  font-size: 14px;
-  font-weight: 600;
-  padding-top: 8px;
-  flex-shrink: 0;
-}
-
-.row-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 6px;
-}
-
-.sub-group {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.sub-label {
-  width: 80px;
-  font-size: 13px;
-  color: #8c8c8c;
-  flex-shrink: 0;
-}
-
-:deep(.el-checkbox) {
-  margin-right: 24px !important;
-  height: auto !important;
-}
-
-:deep(.el-checkbox.is-disabled) {
-  border-color: #d9d9d9 !important;
-}
-
-:deep(.el-checkbox__label) {
-  font-size: 14px !important;
-  color: #262626 !important;
-}
-
-:deep(.el-checkbox.is-disabled .el-checkbox__label) {
-  color: #bfbfbf !important;
-}
-
-/* ==========================================================================
-   模块 2：工具栏区域样式
-   ========================================================================== */
-.market-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 26px;
-  box-sizing: border-box;
-}
-
-.total-count-text {
-  font-size: 14px;
-  color: #666666;
-}
-
-.count-highlight {
-  color: #1677FF;
-  font-weight: 600;
-  margin-left: 2px;
-  margin-right: 2px;
-}
-
-.toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.sort-selector {
-  width: 200px !important;
-}
-
-:deep(.el-input__wrapper) {
-  height: 40px !important;
-  border-radius: 6px !important;
-}
-
-.search-input-box {
-  display: flex;
-  align-items: center;
-  width: 300px;
-  height: 40px;
-  background: #FFFFFF;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  overflow: hidden;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease;
-}
-
-.search-input-box:focus-within {
-  border-color: #1677FF;
-}
-
-.native-search-input {
-  flex: 1;
-  height: 100%;
-  border: none;
-  outline: none;
-  padding-left: 14px;
-  padding-right: 10px;
-  font-size: 14px;
-  color: #262626;
-}
-
-.native-search-input::placeholder {
-  color: #bfbfbf;
-}
-
-.search-action-btn {
-  width: 46px;
-  height: 100%;
-  background: #1677FF;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFFFFF;
-  font-size: 16px;
-  transition: background-color 0.2s ease;
-}
-
-.search-action-btn:hover {
-  background: #4693ff;
-}
-
-/* ==========================================================================
-   模块 3：产品卡片与网格布局
-   ========================================================================== */
-.market-grid-container {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.market-card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px;
-  width: 100%;
-}
-
-.empty-placeholder {
-  text-align: center;
-  padding-top: 100px;
-  padding-bottom: 100px;
-  color: #999999;
-  font-size: 15px;
-}
-
-.product-card {
-  position: relative;
-  width: 100%;
-  height: 455px;
-  background: #FFFFFF;
-  border-radius: 12px;
-  border: 1px solid #eef2f6;
-  box-sizing: border-box;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.product-card :deep(.el-card__body) {
-  padding: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-card:hover {
-  transform: translateY(-4px);
-  border-color: #e0e5eb;
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02) !important;
-}
-
-.card-tag {
-  position: absolute;
-  top: 0;
-  right: 24px;
-  background-color: #ff4d4f;
-  color: white;
-  font-size: 11px;
-  font-weight: bold;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 0 0 6px 6px;
-  z-index: 5;
-}
-
-.card-header {
-  padding-top: 30px;
-  padding-bottom: 16px;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.product-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #222222;
-  margin-top: 0;
-  margin-bottom: 14px;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.product-name:hover {
-  color: #1677FF; 
-}
-
-.product-labels {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.label {
-  font-size: 12px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 4px;
-  font-weight: 500;
-}
-
+/* 纯原版样式完整保留 */
+.market-page-wrapper { width: 1600px; margin-left: auto; margin-right: auto; padding-top: 30px; padding-bottom: 80px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+.filter-placeholder-bar { width: 100%; height: 58px; margin-bottom: 30px; box-sizing: border-box; }
+.filter-wrapper { width: 100%; background: #FFFFFF; border-radius: 12px; border: 1px solid #eef2f6; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02); margin-bottom: 30px; box-sizing: border-box; transition: box-shadow 0.3s ease, border-radius 0.2s ease; }
+.filter-fixed-top { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); width: 1600px; z-index: 999; border-radius: 0 0 12px 12px; border-top: none; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
+.filter-slide-in { animation: filterSlideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes filterSlideDown { 0% { transform: translateY(-20px); opacity: 0; } 100% { transform: translate3d(0, 0, 0); opacity: 1; } }
+.filter-fixed-top.filter-slide-in { animation: filterSlideFixedDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes filterSlideFixedDown { 0% { transform: translate3d(-50%, -20px, 0); opacity: 0; } 100% { transform: translate3d(-50%, 0, 0); opacity: 1; } }
+.filter-wrapper:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04); }
+.filter-container { padding-left: 24px; padding-right: 24px; padding-bottom: 16px; }
+.filter-fixed-top .filter-container { padding-bottom: 0px; }
+.filter-header { display: flex; align-items: center; justify-content: space-between; padding-top: 20px; padding-bottom: 16px; cursor: pointer; user-select: none; }
+.filter-fixed-top .filter-header { padding-top: 16px; padding-bottom: 16px; }
+.filter-header-left { display: flex; align-items: center; gap: 10px; }
+.filter-icon { color: #1677FF; font-size: 18px; }
+.filter-title-text { font-size: 16px; font-weight: 600; color: #262626; }
+.arrow-rotate { transform: rotate(180deg); transition: transform 0.3s ease; }
+.filter-body { border-top: 1px solid #f0f0f0; padding-top: 12px; display: flex; flex-direction: column; gap: 16px; }
+.filter-row { display: flex; align-items: flex-start; min-height: 40px; }
+.row-label { width: 100px; color: #262626; font-size: 14px; font-weight: 600; padding-top: 8px; flex-shrink: 0; }
+.row-content { flex: 1; display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+.sub-group { display: flex; align-items: center; flex-wrap: wrap; }
+.sub-label { width: 80px; font-size: 13px; color: #8c8c8c; flex-shrink: 0; }
+:deep(.el-checkbox) { margin-right: 24px !important; height: auto !important; }
+:deep(.el-checkbox.is-disabled) { border-color: #d9d9d9 !important; }
+:deep(.el-checkbox__label) { font-size: 14px !important; color: #262626 !important; }
+:deep(.el-checkbox.is-disabled .el-checkbox__label) { color: #bfbfbf !important; }
+.market-toolbar { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 26px; box-sizing: border-box; }
+.total-count-text { font-size: 14px; color: #666666; }
+.count-highlight { color: #1677FF; font-weight: 600; margin-left: 2px; margin-right: 2px; }
+.toolbar-right { display: flex; align-items: center; gap: 16px; }
+.sort-selector { width: 200px !important; }
+:deep(.el-input__wrapper) { height: 40px !important; border-radius: 6px !important; }
+.search-input-box { display: flex; align-items: center; width: 300px; height: 40px; background: #FFFFFF; border: 1px solid #d9d9d9; border-radius: 6px; overflow: hidden; box-sizing: border-box; transition: border-color 0.2s ease; }
+.search-input-box:focus-within { border-color: #1677FF; }
+.native-search-input { flex: 1; height: 100%; border: none; outline: none; padding-left: 14px; padding-right: 10px; font-size: 14px; color: #262626; }
+.native-search-input::placeholder { color: #bfbfbf; }
+.search-action-btn { width: 46px; height: 100%; background: #1677FF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 16px; transition: background-color 0.2s ease; }
+.search-action-btn:hover { background: #4693ff; }
+.market-grid-container { width: 100%; box-sizing: border-box; }
+.market-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; }
+.empty-placeholder { text-align: center; padding-top: 100px; padding-bottom: 100px; color: #999999; font-size: 15px; }
+.product-card { position: relative; width: 100%; height: 455px; background: #FFFFFF; border-radius: 12px; border: 1px solid #eef2f6; box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+.product-card :deep(.el-card__body) { padding: 0; height: 100%; display: flex; flex-direction: column; }
+.product-card:hover { transform: translateY(-4px); border-color: #e0e5eb; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02) !important; }
+.card-tag { position: absolute; top: 0; right: 24px; background-color: #ff4d4f; color: white; font-size: 11px; font-weight: bold; padding-top: 4px; padding-bottom: 4px; padding-left: 10px; padding-right: 10px; border-radius: 0 0 6px 6px; z-index: 5; }
+.card-header { padding-top: 30px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; }
+.product-name { font-size: 20px; font-weight: bold; color: #222222; margin-top: 0; margin-bottom: 14px; cursor: pointer; transition: color 0.2s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.product-name:hover { color: #1677FF; }
+.product-labels { display: flex; flex-wrap: wrap; gap: 8px; }
+.label { font-size: 12px; padding-top: 3px; padding-bottom: 3px; padding-left: 10px; padding-right: 10px; border-radius: 4px; font-weight: 500; }
 .product-labels .label:nth-child(1) { color: #0091ff; background-color: #e6f4ff; }
 .product-labels .label:nth-child(2) { color: #3366ff; background-color: #eef2ff; }
 .product-labels .label:nth-child(3) { color: #00b365; background-color: #e6f9f0; }
 .product-labels .label:nth-child(4) { color: #ff6600; background-color: #fff2e6; }
-
-.specs-matrix {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 32px;
-  padding-top: 16px;
-  padding-bottom: 16px;
-  padding-left: 24px;
-  padding-right: 24px;
-  background-color: #fafbfc;
-  border-top: 1px solid #eef2f6;
-  border-bottom: 1px solid #eef2f6;
-}
-
-.spec-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-}
-
+.specs-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; background-color: #fafbfc; border-top: 1px solid #eef2f6; border-bottom: 1px solid #eef2f6; }
+.spec-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
 .spec-label { color: #8c8c8c; }
 .spec-value { color: #262626; font-weight: 500; }
-
-.product-price-row {
-  padding-top: 16px;
-  padding-bottom: 12px;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.product-price {
-  display: flex;
-  align-items: baseline;
-}
-
+.product-price-row { padding-top: 16px; padding-bottom: 12px; padding-left: 24px; padding-right: 24px; }
+.product-price { display: flex; align-items: baseline; }
 .price-symbol { font-size: 1.1rem; color: #ff9900; font-weight: bold; }
 .price-value { font-size: 1.8rem; color: #ff9900; font-weight: bold; margin-left: 4px; margin-right: 4px; }
 .price-unit { font-size: 0.85rem; color: #8c8c8c; }
-
-.card-actions {
-  display: flex;
-  justify-content: space-between;
-  padding-left: 24px;
-  padding-right: 24px;
-  padding-bottom: 24px;
-  margin-top: auto;
-}
-
-.add-cart-btn {
-  width: 130px !important;
-  height: 46px !important;
-  background: #FFFFFF !important;
-  border-radius: 6px !important;
-  border: 1px solid #1677FF !important;
-  color: #1677FF !important;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0;
-  transition: all 0.2s ease;
-}
-
-.add-cart-btn:hover {
-  background: #FFFFFF !important; 
-  border-width: 1.5px !important; 
-  border-color: #afafaf !important;  
-  color: #000000 !important;         
-  box-shadow: none !important;
-}
-
-.stockout-btn {
-  width: 130px !important;
-  height: 46px !important;
-  background: #f5f5f5 !important;
-  border-radius: 6px !important;
-  border: 1px solid #d9d9d9 !important;
-  color: #bfbfbf !important;
-  font-size: 14px;
-  cursor: not-allowed !important;
-}
-
-.buy-now-btn {
-  width: 190px !important;
-  height: 46px !important;
-  background: #1677FF !important;
-  border: 1px solid #1677FF !important;
-  border-radius: 6px !important;
-  color: #FFFFFF !important;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0;
-  transition: all 0.25s ease;
-}
-
-.buy-now-btn:hover {
-  background: #4693ff !important;
-  border-color: #4693ff !important;
-}
-
-.demand-btn {
-  width: 190px !important;
-  height: 46px !important;
-  background: #1677FF !important;
-  border: 1px solid #1677FF !important;
-  color: #FFFFFF !important;
-  border-radius: 6px !important;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0;
-  transition: all 0.25s ease;
-}
-
-.demand-btn:hover {
-  background: #4693ff !important;
-  border-color: #4693ff !important;
-}
-
-/* ==========================================================================
-   模块 4：正在加载更多状态流提示条
-   ========================================================================== */
-.infinite-load-trigger {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 50px;
-  padding-bottom: 20px;
-  box-sizing: border-box;
-}
-
-.loading-status-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #1677FF;
-}
-
-.loading-text {
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.no-more-status {
-  font-size: 14px;
-  color: #bfbfbf;
-}
+.card-actions { display: flex; justify-content: space-between; padding-left: 24px; padding-right: 24px; padding-bottom: 24px; margin-top: auto; }
+.add-cart-btn { width: 130px !important; height: 46px !important; background: #FFFFFF !important; border-radius: 6px !important; border: 1px solid #1677FF !important; color: #1677FF !important; font-size: 14px; font-weight: 500; padding: 0; transition: all 0.2s ease; }
+.add-cart-btn:hover { background: #FFFFFF !important; border-width: 1.5px !important; border-color: #afafaf !important; color: #000000 !important; box-shadow: none !important; }
+.stockout-btn { width: 130px !important; height: 46px !important; background: #f5f5f5 !important; border-radius: 6px !important; border: 1px solid #d9d9d9 !important; color: #bfbfbf !important; font-size: 14px; cursor: not-allowed !important; }
+.buy-now-btn { width: 190px !important; height: 46px !important; background: #1677FF !important; border: 1px solid #1677FF !important; border-radius: 6px !important; color: #FFFFFF !important; font-size: 14px; font-weight: 500; padding: 0; transition: all 0.25s ease; }
+.buy-now-btn:hover { background: #4693ff !important; border-color: #4693ff !important; }
+.demand-btn { width: 190px !important; height: 46px !important; background: #1677FF !important; border: 1px solid #1677FF !important; color: #FFFFFF !important; border-radius: 6px !important; font-size: 14px; font-weight: 500; padding: 0; transition: all 0.25s ease; }
+.demand-btn:hover { background: #4693ff !important; border-color: #4693ff !important; }
+.infinite-load-trigger { width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 50px; padding-bottom: 20px; box-sizing: border-box; }
+.loading-status-box { display: flex; align-items: center; gap: 10px; color: #1677FF; }
+.loading-text { font-size: 15px; font-weight: 500; letter-spacing: 0.5px; }
+.no-more-status { font-size: 14px; color: #bfbfbf; }
 </style>
