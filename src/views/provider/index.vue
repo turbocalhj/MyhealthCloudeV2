@@ -69,8 +69,13 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router' // 👇 引入路由
+
+const router = useRouter()
+
 const handleProviderApply = () => {
-  console.log('触发供给方入驻表单申请逻辑')
+  // 👇 触发跳转到申请表单页
+  router.push({ name: 'ProviderApply' })
 }
 
 const handleConsult = () => {
@@ -79,247 +84,34 @@ const handleConsult = () => {
 </script>
 
 <style scoped>
-/* ==========================================================================
-   全局整页容器
-   ========================================================================== */
-.provider-page-global-container {
-  width: 100%;
-  background-color: #FFFFFF;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-/* ==========================================================================
-   第一部分：第一个 Banner（保持不动）
-   ========================================================================== */
-.provider-first-banner {
-  position: relative;
-  width: 100%;
-  height: 440px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: url('./images/banner1.png') center center no-repeat;
-  background-size: cover;
-  box-sizing: border-box;
-}
-
-.banner-text-inner {
-  text-align: center;
-  max-width: 880px;
-  padding: 0 20px;
-}
-
-.banner-main-headline {
-  font-size: 38px;
-  font-weight: bold;
-  color: #1677FF;
-  margin-top: 0;
-  margin-bottom: 20px;
-  letter-spacing: 3px;
-}
-
-.banner-sub-paragraph-text {
-  font-size: 15px;
-  color: #555555;
-  line-height: 1.8;
-  margin-top: 0;
-  margin-bottom: 24px;
-}
-
-.banner-badges-row {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.badge-tag-item {
-  font-size: 13px;
-  color: #1677FF;
-  background: rgba(22, 119, 255, 0.06);
-  border: 1px solid rgba(22, 119, 255, 0.2);
-  padding: 5px 16px;
-  border-radius: 20px;
-  font-weight: 500;
-}
-
-/* 核心按钮：加入精美悬浮浮动位移和浅蓝色深投影 */
-.banner-action-apply-btn {
-  width: 140px !important;
-  height: 42px !important;
-  background: #1677FF !important;
-  border-radius: 4px !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  border: none !important;
-  box-shadow: 0 4px 10px rgba(22, 119, 255, 0.15);
-  /* 增加贝塞尔曲线平滑过渡 */
-  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease !important;
-}
-
-.banner-action-apply-btn:hover {
-  background: #4096ff !important;
-  transform: translateY(-3px); /* 向上浮动变空灵 */
-  box-shadow: 0 8px 22px rgba(22, 119, 255, 0.35) !important; /* 阴影范围扩大加深 */
-}
-
-/* ==========================================================================
-   第二部分：流程展示区（纯白色内容页布局，高 644px，标题居上，图片居中）
-   ========================================================================== */
-.provider-process-standard-section {
-  width: 100%;
-  height: 644px; /* 严格要求固定高度 644px */
-  background-color: #FFFFFF; /* 纯白色背景底色 */
-  display: flex;
-  flex-direction: column; /* 纵向流式排版：上方文字标题，下方图片 */
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 56px; /* 预留顶部舒适间距 */
-  box-sizing: border-box;
-}
-
-/* 真实的网页大标题区 */
-.process-section-header {
-  text-align: center;
-  margin-bottom: 36px; /* 标题与下方图片组件之间的网格 gap */
-}
-
-.process-main-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #222222;
-  margin-top: 0;
-  margin-bottom: 40px;
-  letter-spacing: 2px;
-}
-
-.process-title-underline {
-  width: 36px;
-  height: 3px;
-  background-color: #1677FF;
-  margin: 0 auto 12px auto;
-  border-radius: 2px;
-}
-
-.process-sub-title {
-  font-size: 14px;
-  color: #8c8c8c;
-  margin: 0;
-}
-
-/* 核心图片承载区 */
-.process-image-native-box {
-  width: 100%;
-  max-width: 1200px; /* 限制大图范围与全站 1200 网格中轴线对齐 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-}
-
-/* 图片渲染机制：不再全覆盖，原尺寸等比居中 */
-.process-embed-img {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain; /* 保证原图卡片流线不发生任何比例变形 */
-}
-
-/* ==========================================================================
-   第三部分：工业级暗色 Footer 页脚区样式
-   ========================================================================== */
-.global-dark-footer-block {
-  width: 100%;
-  background-color: #1e1e1e;
-  padding-top: 60px;
-  padding-bottom: 30px;
-  box-sizing: border-box;
-}
-
-.footer-inner-1600-container {
-  width: 1600px;
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.footer-top-columns-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 100%;
-  padding-bottom: 40px;
-  border-bottom: 1px solid #333333;
-}
-
-.footer-brand-logo-col {
-  color: #FFFFFF;
-}
-
-.footer-brand-main-title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.footer-info-details-col {
-  max-width: 500px;
-}
-
-.column-header-title-lbl {
-  font-size: 16px;
-  font-weight: bold;
-  color: #FFFFFF;
-  margin-top: 0;
-  margin-bottom: 18px;
-}
-
-.info-text-line-item {
-  font-size: 14px;
-  color: #a6a6a6;
-  line-height: 1.8;
-  margin-top: 0;
-  margin-bottom: 8px;
-}
-
-.footer-contact-action-col {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.footer-consult-action-btn {
-  width: 110px !important;
-  height: 40px !important;
-  background: #1677FF !important;
-  border: 1px solid #1677FF !important;
-  border-radius: 4px !important;
-  color: #FFFFFF !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  padding: 0 !important;
-}
-
-.footer-consult-action-btn:hover {
-  background: #4693ff !important;
-  border-color: #4693ff !important;
-}
-
-.footer-bottom-compliance-bar {
-  padding-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.compliance-text-line-row {
-  font-size: 13px;
-  color: #777777;
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 1.5;
-}
+/* 原样保留全部原有样式，不缩减任何一行代码 */
+.provider-page-global-container { width: 100%; background-color: #FFFFFF; display: flex; flex-direction: column; box-sizing: border-box; }
+.provider-first-banner { position: relative; width: 100%; height: 440px; display: flex; align-items: center; justify-content: center; background: url('./images/banner1.png') center center no-repeat; background-size: cover; box-sizing: border-box; }
+.banner-text-inner { text-align: center; max-width: 880px; padding: 0 20px; }
+.banner-main-headline { font-size: 38px; font-weight: bold; color: #1677FF; margin-top: 0; margin-bottom: 20px; letter-spacing: 3px; }
+.banner-sub-paragraph-text { font-size: 15px; color: #555555; line-height: 1.8; margin-top: 0; margin-bottom: 24px; }
+.banner-badges-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 28px; }
+.badge-tag-item { font-size: 13px; color: #1677FF; background: rgba(22, 119, 255, 0.06); border: 1px solid rgba(22, 119, 255, 0.2); padding: 5px 16px; border-radius: 20px; font-weight: 500; }
+.banner-action-apply-btn { width: 140px !important; height: 42px !important; background: #1677FF !important; border-radius: 4px !important; font-size: 14px !important; font-weight: 500 !important; border: none !important; box-shadow: 0 4px 10px rgba(22, 119, 255, 0.15); transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease !important; }
+.banner-action-apply-btn:hover { background: #4096ff !important; transform: translateY(-3px); box-shadow: 0 8px 22px rgba(22, 119, 255, 0.35) !important; }
+.provider-process-standard-section { width: 100%; height: 644px; background-color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 56px; box-sizing: border-box; }
+.process-section-header { text-align: center; margin-bottom: 36px; }
+.process-main-title { font-size: 28px; font-weight: bold; color: #222222; margin-top: 0; margin-bottom: 40px; letter-spacing: 2px; }
+.process-title-underline { width: 36px; height: 3px; background-color: #1677FF; margin: 0 auto 12px auto; border-radius: 2px; }
+.process-sub-title { font-size: 14px; color: #8c8c8c; margin: 0; }
+.process-image-native-box { width: 100%; max-width: 1200px; display: flex; justify-content: center; align-items: center; box-sizing: border-box; }
+.process-embed-img { max-width: 100%; height: auto; object-fit: contain; }
+.global-dark-footer-block { width: 100%; background-color: #1e1e1e; padding-top: 60px; padding-bottom: 30px; box-sizing: border-box; }
+.footer-inner-1600-container { width: 1600px; margin-left: auto; margin-right: auto; box-sizing: border-box; padding-left: 24px; padding-right: 24px; }
+.footer-top-columns-row { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding-bottom: 40px; border-bottom: 1px solid #333333; }
+.footer-brand-logo-col { color: #FFFFFF; }
+.footer-brand-main-title { margin: 0; font-size: 22px; font-weight: bold; }
+.footer-info-details-col { max-width: 500px; }
+.column-header-title-lbl { font-size: 16px; font-weight: bold; color: #FFFFFF; margin-top: 0; margin-bottom: 18px; }
+.info-text-line-item { font-size: 14px; color: #a6a6a6; line-height: 1.8; margin-top: 0; margin-bottom: 8px; }
+.footer-contact-action-col { display: flex; flex-direction: column; align-items: flex-start; }
+.footer-consult-action-btn { width: 110px !important; height: 40px !important; background: #1677FF !important; border: 1px solid #1677FF !important; border-radius: 4px !important; color: #FFFFFF !important; font-size: 14px !important; font-weight: 500 !important; padding: 0 !important; }
+.footer-consult-action-btn:hover { background: #4693ff !important; border-color: #4693ff !important; }
+.footer-bottom-compliance-bar { padding-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.compliance-text-line-row { font-size: 13px; color: #777777; margin-top: 0; margin-bottom: 0; line-height: 1.5; }
 </style>

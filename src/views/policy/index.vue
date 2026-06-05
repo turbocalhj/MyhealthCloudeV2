@@ -96,7 +96,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router' // 👇 新增引入路由
 import { Clock } from '@element-plus/icons-vue' // 需要引入 Element Plus 的图标库
+
+const router = useRouter() // 👇 实例化路由
 
 // Tab 选项定义
 const tabsOptions = [
@@ -178,8 +181,12 @@ const handleApply = () => {
   console.log('触发Banner算力券申报')
 }
 
+// 👇 修改后的跳转方法
 const handlePolicyDetail = (policy: any) => {
-  console.log('前往政策详情：', policy.title)
+  router.push({
+    name: 'PolicyDetail',
+    query: { title: policy.title }
+  })
 }
 
 const handleConsult = () => {
@@ -252,7 +259,6 @@ const handleConsult = () => {
   width: 416px;
   height: 12px;
   white-space: nowrap
-
 }
 
 .banner-badge-hint {

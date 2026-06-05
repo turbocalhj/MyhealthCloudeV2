@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
 const routes = [
-  // 刚进入系统时，根路径默认重定向去前台大厅的首页
   {
     path: '/',
     redirect: '/main/home'
@@ -40,10 +39,23 @@ const routes = [
         meta: { title: '政策专区' }
       },
       {
+        path: 'policy-detail',
+        name: 'PolicyDetail',
+        component: () => import('@/views/policy/Detail.vue'),
+        meta: { title: '政策详情' }
+      },
+      {
         path: 'provider',
         name: 'Provider',
         component: () => import('@/views/provider/index.vue'),
         meta: { title: '供给方入驻' }
+      },
+      // 👇 新增：供给方入驻申请表单页
+      {
+        path: 'provider-apply',
+        name: 'ProviderApply',
+        component: () => import('@/views/provider/Apply.vue'),
+        meta: { title: '入驻申请' }
       }
     ]
   },
