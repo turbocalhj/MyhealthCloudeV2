@@ -1,0 +1,26 @@
+/* src/assets/styles/theme.css */
+:root {
+  /* 🔵 品牌主色调 */
+  --pc-brand-primary: #1677FF;
+  --pc-brand-primary-hover: #4693ff;
+  --pc-brand-danger: #ff4d4f;
+  --pc-brand-warning: #ff9900;
+  
+  /* ⚪️ 背景色 */
+  --pc-bg-page: #f7f9fc;
+  --pc-bg-card: #ffffff;
+  --pc-bg-tag-blue: #e6f4ff;
+  --pc-bg-disabled: #f5f5f5;
+  
+  /* ⚫️ 文本色阶 */
+  --pc-text-main: #222222;
+  --pc-text-regular: #333333;
+  --pc-text-secondary: #666666;
+  --pc-text-muted: #8c8c8c;
+  --pc-text-disabled: #bfbfbf;
+  
+  /* 🔲 边框与分割线 */
+  --pc-border-light: #eef2f6;
+  --pc-border-base: #d9d9d9;
+  --pc-border-lighter: #f0f0f0;
+}

@@ -5,7 +5,7 @@
       <div class="solution-banner-block">
         <div class="banner-background-layer">
           <img 
-            src="./images/Mask.png" 
+            src="@/assets/images/solution/Mask.png" 
             alt="解决方案大图背景" 
             class="banner-mask-native-img" 
           />
@@ -123,7 +123,7 @@
           <h2 class="detail-section-title">方案架构</h2>
           <div class="detail-arch-layout">
             <div class="arch-diagram-box">
-              <img src="../solution/images/jiegou.png">
+              <img src="@/assets/images/solution/Jiegou.png">
             </div>
             
             <div class="arch-text-box">
@@ -561,7 +561,7 @@ const handleConsult = () => {
 .detail-banner-section {
   height: 460px;
   background: linear-gradient(180deg, #E6F0FF 0%, #FFFFFF 100%);
-  background-image: url("../solution/images/FangAn.png");
+  background-image: url("@/assets/images/solution/FangAn.png");
   background-size: cover;
   background-position: center;
   display: flex;

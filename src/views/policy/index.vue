@@ -3,7 +3,7 @@
     <div class="policy-banner-block">
       <div class="banner-background-layer">
         <img 
-          src="./images/banner.png" 
+          src="@/assets/images/policy/banner.png" 
           alt="政策专区背景" 
           class="banner-mask-native-img" 
         />

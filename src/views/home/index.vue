@@ -1,7 +1,7 @@
 <template>
   <div class="banner-container">
     <div class="banner-background">
-      <img src="@/views/home/images/Banner图.png" alt="Banner图" class="banner-image" />
+      <img src="@/assets/images/home/Banner.png" alt="Banner图" class="banner-image" />
     </div>
     <div class="banner-content">
       <div class="banner-subtitle">算力普惠民生 · 智算赋能产业</div>
@@ -153,7 +153,7 @@
       
       <div class="provider-visual">
         <img 
-          src="@/views/home/images/供给方入驻.png" 
+          src="@/assets/images/home/provider.png" 
           alt="供给方入驻" 
           class="provider-main-img" 
         />
@@ -171,7 +171,7 @@
       <div class="policy-hover-card policy-main-hero" @click="handlePolicyLink(1)">
         <div class="policy-image-box">
           <img 
-            src="@/views/home/images/位图.png" 
+            src="@/assets/images/home/position.png" 
             alt="政策主图" 
             class="hero-img"
           />

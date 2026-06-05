@@ -29,7 +29,7 @@
 
       <div class="process-image-native-box">
         <img 
-          src="./images/banner2.png" 
+          src="@/assets/images/provider/banner2.png" 
           alt="合作入驻流程图" 
           class="process-embed-img"
         />
@@ -86,7 +86,7 @@ const handleConsult = () => {
 <style scoped>
 /* 原样保留全部原有样式，不缩减任何一行代码 */
 .provider-page-global-container { width: 100%; background-color: #FFFFFF; display: flex; flex-direction: column; box-sizing: border-box; }
-.provider-first-banner { position: relative; width: 100%; height: 440px; display: flex; align-items: center; justify-content: center; background: url('./images/banner1.png') center center no-repeat; background-size: cover; box-sizing: border-box; }
+.provider-first-banner { position: relative; width: 100%; height: 440px; display: flex; align-items: center; justify-content: center; background: url('@/assets/images/provider/banner1.png') center center no-repeat; background-size: cover; box-sizing: border-box; }
 .banner-text-inner { text-align: center; max-width: 880px; padding: 0 20px; }
 .banner-main-headline { font-size: 38px; font-weight: bold; color: #1677FF; margin-top: 0; margin-bottom: 20px; letter-spacing: 3px; }
 .banner-sub-paragraph-text { font-size: 15px; color: #555555; line-height: 1.8; margin-top: 0; margin-bottom: 24px; }

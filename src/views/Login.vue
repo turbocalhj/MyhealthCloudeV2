@@ -3,7 +3,6 @@
     <div class="login-box">
       <div class="login-header">
         <h2>算力调度运营平台</h2>
-      
       </div>
 
       <el-form :model="loginForm" :rules="rules" ref="loginFormRef" size="large">
@@ -31,15 +30,16 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
+import { loginApi } from '@/api/auth' // 🚀 引入剥离好的 API 模块
 
 const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
 
-// 显式接收路由实例，防止自动导入插件在异步回调中丢失上下文
 const nativeRouter = useRouter()
+const currentRoute = useRoute()
 
 const loginForm = reactive({
   username: '',
@@ -54,30 +54,37 @@ const rules = {
 const handleLogin = async () => {
   if (!loginFormRef.value) return
   
-  await loginFormRef.value.validate((valid) => {
+  await loginFormRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
       
-      // 1. 先将登录标记存入本地缓存，确保前置路由守卫安全放行
-      localStorage.setItem('isPlatformLogged', 'true')
-      
-      setTimeout(() => {
-        loading.value = false
+      try {
+        // 🚀 核心重构：使用 try-catch 和 await 处理真实的异步 API 请求
+        const res: any = await loginApi(loginForm)
+        
+        // 登录成功后存储鉴权信息
+        localStorage.setItem('accessToken', res.token)
+        localStorage.setItem('userRoles', JSON.stringify(res.roles))
         
         ElMessage({
-          message: '登录成功，正在为您返回系统首页...',
+          message: '登录成功，正在进入系统...',
           type: 'success',
           duration: 1500
         })
         
-        // 🌟 核心微调点：同步更新跳转路径为前台大厅的专属物理隔离地址 /main/home
-        // 这样可以确保登录成功后，页面绝对不会错误地串进后台控制台的菜单里渲染
+        const redirectUrl = (currentRoute.query.redirect as string) || '/main/home'
+        
         if (nativeRouter && typeof nativeRouter.push === 'function') {
-          nativeRouter.push('/main/home')
+          nativeRouter.replace(redirectUrl)
         } else {
-          window.location.hash = '#/main/home'
+          window.location.hash = `#${redirectUrl}`
         }
-      }, 800)
+      } catch (error: any) {
+        ElMessage.error(error.message || '登录失败，请检查网络或账号信息')
+      } finally {
+        loading.value = false
+      }
+
     } else {
       ElMessage.error('请完整填写登录表单项！')
     }
@@ -86,10 +93,11 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+/* 原有布局样式保持 100% 不变 */
 .login-wrapper {
   width: 100vw;
   height: 100vh;
-  background-image: url('@/views/images/Banner.png');
+  background-image: url('@/assets/images/login/log.png');
   background-size: cover;          /* 覆盖整个区域，保持比例 */
   background-position: center;     /* 居中显示 */
   background-repeat: no-repeat;    /* 不平铺 */
