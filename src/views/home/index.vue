@@ -364,7 +364,7 @@ interface Policy {
   url: string
 }
 
-const policies = ref([
+const policies = ref<Policy[]>([
   { 
     id: 2, 
     title: '浙江省人民政府印发关于支持人工智能创新发展...', 

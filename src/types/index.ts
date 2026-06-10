@@ -43,3 +43,55 @@ export interface MessageItem {
   status: '已读' | '未读'
   content?: string
 }
+
+/**
+ * 登录请求参数
+ */
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
+/**
+ * 登录响应数据
+ */
+export interface LoginResponse {
+  token: string
+  roles: string[]
+}
+
+/**
+ * 通用 API 响应包装
+ */
+export interface ApiResponse<T = unknown> {
+  code: number
+  data: T
+  message: string
+}
+
+/**
+ * 用户信息
+ */
+export interface UserInfo {
+  token: string
+  roles: string[]
+}
+
+/**
+ * 分页请求参数
+ */
+export interface PaginationParams {
+  page?: number
+  pageSize?: number
+  [key: string]: unknown
+}
+
+/**
+ * 分页响应数据
+ */
+export interface PaginationResult<T> {
+  list: T[]
+  total: number
+  page: number
+  pageSize: number
+}

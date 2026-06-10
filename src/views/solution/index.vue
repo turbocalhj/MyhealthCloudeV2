@@ -203,7 +203,7 @@ import { ref } from 'vue'
 const showDetail = ref(false)
 
 // 修改：接收路由点击进行跳转的方法
-const handleSolutionLink = (type: string) => {
+const handleSolutionLink = (_type: string) => {
   showDetail.value = true
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }

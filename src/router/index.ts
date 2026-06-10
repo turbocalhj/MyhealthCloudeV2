@@ -234,15 +234,43 @@ const router = createRouter({
   routes: constantRoutes
 })
 
-// 用于标记是否已经挂载了动态路由，防止无限循环
-let hasAddedRoutes = false
+// ==================== 权限过滤工具函数 ====================
+/**
+ * 检查用户角色是否具备访问路由的权限
+ */
+const hasPermission = (roles: string[], routeRoles?: string[]): boolean => {
+  // 如果路由没有设置角色限制，则默认允许访问
+  if (!routeRoles || routeRoles.length === 0) return true
+  // 用户角色与路由角色有交集即可访问
+  return roles.some(role => routeRoles.includes(role))
+}
+
+/**
+ * 根据用户角色过滤路由
+ */
+const filterAsyncRoutes = (routes: any[], roles: string[]): any[] => {
+  const accessibleRoutes: any[] = []
+  
+  routes.forEach(route => {
+    const tmp = { ...route }
+    if (hasPermission(roles, tmp.meta?.roles)) {
+      // 递归过滤子路由
+      if (tmp.children) {
+        tmp.children = filterAsyncRoutes(tmp.children, roles)
+      }
+      accessibleRoutes.push(tmp)
+    }
+  })
+  
+  return accessibleRoutes
+}
 
 // ==================== 全局路由前置守卫 (JWT + 动态路由鉴权) ====================
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   // 引入真实 JWT Token 校验机制（替代明文判断）
   const token = localStorage.getItem('accessToken')
 
-  // 判断目标路径是否属于需要登录保护的私密路由（这里简易判断，实际也可以结合 meta.requireAuth）
+  // 判断目标路径是否属于需要登录保护的私密路由
   const requireAuth = to.path.startsWith('/console') || to.path.startsWith('/finance')
 
   if (token) {
@@ -250,24 +278,30 @@ router.beforeEach((to, _from, next) => {
       // 已登录状态下拦截登录页，直接放行回首页
       next('/main/home')
     } else {
-      if (!hasAddedRoutes) {
-        // RBAC 核心：如果没有挂载过动态路由，根据当前用户权限动态挂载
+      // 使用 sessionStorage 标记动态路由是否已挂载（页面刷新后自动重置）
+      const routesAdded = sessionStorage.getItem('routes_added') === 'true'
+      
+      if (!routesAdded) {
         try {
-          // 这里可以获取 localStorage 中存的用户角色，或者请求接口。假设这里读取到了角色:
-          //const userRolesStr = localStorage.getItem('userRoles')
-          //  const roles = userRolesStr ? JSON.parse(userRolesStr) : ['user']
+          // 获取用户角色
+          const userRolesStr = localStorage.getItem('userRoles')
+          const roles = userRolesStr ? JSON.parse(userRolesStr) : ['user']
 
-          // 遍历并动态注入具备权限的路由
-          asyncRoutes.forEach(route => {
-            // 简单权限过滤逻辑：如果没设权限或者用户包含该权限，就挂载（为演示全量接管，这里全量注册）
+          // 根据用户权限动态过滤并挂载路由
+          const accessibleRoutes = filterAsyncRoutes(asyncRoutes, roles)
+          
+          // 动态添加有权限的路由
+          accessibleRoutes.forEach(route => {
             router.addRoute(route)
           })
           
-          hasAddedRoutes = true
-          // 路由添加后需要重新触发一次导航 (确保刚加入的动态路由可以被访问到)
+          // 标记路由已挂载
+          sessionStorage.setItem('routes_added', 'true')
+          
+          // 路由添加后需要重新触发一次导航
           next({ ...to, replace: true })
         } catch (error) {
-          // 挂载异常，可能是 Token 解析错误或者数据被篡改，清空缓存打回登录
+          // 挂载异常，清空缓存打回登录
           localStorage.removeItem('accessToken')
           localStorage.removeItem('userRoles')
           next(`/login?redirect=${to.path}`)

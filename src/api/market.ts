@@ -1,5 +1,5 @@
 // src/api/market.ts
-import request from '@/utils/request'
+// import request from '@/utils/request'
 
 export interface ComputingProduct {
   id: number

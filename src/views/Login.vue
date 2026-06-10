@@ -31,15 +31,18 @@ import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
+import type { LoginRequest, LoginResponse } from '@/types'
 import { loginApi } from '@/api/auth'
+import { useUserStore } from '@/store/modules/user'
 
 const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
+const userStore = useUserStore()
 
 const nativeRouter = useRouter()
 const currentRoute = useRoute()
 
-const loginForm = reactive({
+const loginForm = reactive<LoginRequest>({
   username: '',
   password: ''
 })
@@ -58,11 +61,10 @@ const handleLogin = async () => {
       
       try {
         // 调用登录API，获取Token和用户角色
-        const res: any = await loginApi(loginForm)
+        const res: LoginResponse = await loginApi(loginForm)
         
-        // 登录成功后存储鉴权信息
-        localStorage.setItem('accessToken', res.token)
-        localStorage.setItem('userRoles', JSON.stringify(res.roles))
+        // 通过 store 统一管理认证信息
+        userStore.setAuth({ token: res.token, roles: res.roles })
         
         ElMessage({
           message: '登录成功，正在进入系统...',
@@ -77,8 +79,9 @@ const handleLogin = async () => {
         } else {
           window.location.hash = `#${redirectUrl}`
         }
-      } catch (error: any) {
-        ElMessage.error(error.message || '登录失败，请检查网络或账号信息')
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : '登录失败，请检查网络或账号信息'
+        ElMessage.error(message)
       } finally {
         loading.value = false
       }

@@ -130,8 +130,8 @@ const goToDetailPage = (row: any) => {
 
 const handleSearch = () => { ElMessage.success('通算资产数据检索完毕') }
 const handleReset = () => { resourceSearchQuery.value = '' }
-const handleAction = (type: string, row: any) => { ElMessage.info(`触发 [${type}] 操作: ${row.name}`) }
-const handleMoreCommand = (cmd: string, row: any) => { ElMessage.success(`快捷指令: ${cmd}`) }
+const handleAction = (type: string, _row: any) => { ElMessage.info(`触发 [${type}] 操作`) }
+const handleMoreCommand = (cmd: string, _row: any) => { ElMessage.success(`快捷指令: ${cmd}`) }
 </script>
 
 <style scoped>
