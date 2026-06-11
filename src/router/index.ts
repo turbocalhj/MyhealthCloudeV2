@@ -2,6 +2,18 @@
 // 功能：管理整个平台的路由映射，包含前台展示、后台管理、财务管理等模块的路由定义
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import NProgress from 'nprogress'
+
+// NProgress 配置
+NProgress.configure({ 
+  showSpinner: false, // 不显示加载圆圈
+  easing: 'ease', 
+  speed: 500,
+  trickleSpeed: 200
+})
+
+// 标记动态路由是否已挂载（模块级变量，页面刷新后自动重置）
+let routesAdded = false
 
 // 前台展示系统路由（无需权限）
 const constantRoutes = [
@@ -190,6 +202,12 @@ export const asyncRoutes = [
         name: 'ApplyDetail',
         component: () => import('@/views/console/ApplyDetail.vue'),
         meta: { title: '申请工单详情', roles: ['admin', 'user'] }
+      },
+      {
+        path: 'account-settings',
+        name: 'AccountSettings',
+        component: () => import('@/views/console/AccountSettings.vue'),
+        meta: { title: '账户设置', roles: ['admin', 'user'] }
       }
     ]
   },
@@ -267,6 +285,8 @@ const filterAsyncRoutes = (routes: any[], roles: string[]): any[] => {
 
 // ==================== 全局路由前置守卫 (JWT + 动态路由鉴权) ====================
 router.beforeEach(async (to, _from, next) => {
+  NProgress.start() // 开始进度条
+
   // 引入真实 JWT Token 校验机制（替代明文判断）
   const token = localStorage.getItem('accessToken')
 
@@ -276,11 +296,10 @@ router.beforeEach(async (to, _from, next) => {
   if (token) {
     if (to.path === '/login') {
       // 已登录状态下拦截登录页，直接放行回首页
+      NProgress.done()
       next('/main/home')
     } else {
-      // 使用 sessionStorage 标记动态路由是否已挂载（页面刷新后自动重置）
-      const routesAdded = sessionStorage.getItem('routes_added') === 'true'
-      
+      // 使用模块级变量标记动态路由是否已挂载
       if (!routesAdded) {
         try {
           // 获取用户角色
@@ -296,14 +315,16 @@ router.beforeEach(async (to, _from, next) => {
           })
           
           // 标记路由已挂载
-          sessionStorage.setItem('routes_added', 'true')
+          routesAdded = true
           
-          // 路由添加后需要重新触发一次导航
-          next({ ...to, replace: true })
+          // 路由添加后需要重新触发一次导航，使用完整路径
+          next(to.fullPath)
         } catch (error) {
           // 挂载异常，清空缓存打回登录
           localStorage.removeItem('accessToken')
           localStorage.removeItem('userRoles')
+          routesAdded = false
+          NProgress.done()
           next(`/login?redirect=${to.path}`)
         }
       } else {
@@ -320,6 +341,7 @@ router.beforeEach(async (to, _from, next) => {
         duration: 3000,
         showClose: true
       })
+      NProgress.done()
       // 携带重定向参数，登录后可以自动跳回想去的页面
       next(`/login?redirect=${to.path}`)
     } else {
@@ -327,6 +349,11 @@ router.beforeEach(async (to, _from, next) => {
       next()
     }
   }
+})
+
+// 路由后置守卫：关闭进度条
+router.afterEach(() => {
+  NProgress.done()
 })
 
 export default router

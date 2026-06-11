@@ -51,7 +51,6 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('userRoles')
     localStorage.removeItem('platform_system_messages')
-    sessionStorage.removeItem('routes_added')
   }
 
   /**

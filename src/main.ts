@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import 'nprogress/nprogress.css'
 import pinia from './store'
 import '@/assets/styles/theme.css' 
 

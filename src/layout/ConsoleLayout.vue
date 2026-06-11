@@ -58,7 +58,7 @@
               <el-dropdown-item command="/console/ecs">云主机服务</el-dropdown-item>
               <el-dropdown-item command="/console/container">容器服务</el-dropdown-item>
               <el-dropdown-item command="/console/order-apply">我的申请</el-dropdown-item>
-              <el-dropdown-item disabled class="disabled-menu-item">账户设置</el-dropdown-item>
+              <el-dropdown-item command="/console/account-settings">账户设置</el-dropdown-item>
               <el-dropdown-item command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -131,6 +131,11 @@
             <el-icon><Message /></el-icon>
             <span>消息服务</span>
           </el-menu-item>
+
+          <el-menu-item index="/console/account-settings">
+            <el-icon><Setting /></el-icon>
+            <span>账户设置</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
 
@@ -176,7 +181,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
-  DataBoard, Monitor, Warning, Tickets, Document, Wallet, Message, Star, Odometer
+  DataBoard, Monitor, Warning, Tickets, Document, Wallet, Message, Star, Odometer, Setting
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/modules/user'
 

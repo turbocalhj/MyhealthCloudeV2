@@ -10,11 +10,26 @@
         router
         class="nav-menu"
       >
-        <el-menu-item index="/main/home">首页</el-menu-item>
-        <el-menu-item index="/main/market">智算超市</el-menu-item>
-        <el-menu-item index="/main/solution">解决方案</el-menu-item>
-        <el-menu-item index="/main/policy">政策专区</el-menu-item>
-        <el-menu-item index="/main/provider">供给方入驻</el-menu-item>
+        <el-menu-item index="/main/home" class="nav-item-animated">
+          <span class="nav-text">首页</span>
+          <span class="nav-underline"></span>
+        </el-menu-item>
+        <el-menu-item index="/main/market" class="nav-item-animated">
+          <span class="nav-text">智算超市</span>
+          <span class="nav-underline"></span>
+        </el-menu-item>
+        <el-menu-item index="/main/solution" class="nav-item-animated">
+          <span class="nav-text">解决方案</span>
+          <span class="nav-underline"></span>
+        </el-menu-item>
+        <el-menu-item index="/main/policy" class="nav-item-animated">
+          <span class="nav-text">政策专区</span>
+          <span class="nav-underline"></span>
+        </el-menu-item>
+        <el-menu-item index="/main/provider" class="nav-item-animated">
+          <span class="nav-text">供给方入驻</span>
+          <span class="nav-underline"></span>
+        </el-menu-item>
       </el-menu>
     </div>
 
@@ -77,7 +92,7 @@
               <el-dropdown-item command="/console/ecs">云主机服务</el-dropdown-item>
               <el-dropdown-item command="/console/container">容器服务</el-dropdown-item>
               <el-dropdown-item command="/console/order-apply">我的申请</el-dropdown-item>
-              <el-dropdown-item disabled class="disabled-menu-item">账户设置</el-dropdown-item>
+              <el-dropdown-item command="/console/account-settings">账户设置</el-dropdown-item>
               <el-dropdown-item command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -156,7 +171,7 @@ const handleUserDropdown = (command: string) => {
 const handleConsoleClick = () => {
   const isLoggedNow = !!localStorage.getItem('accessToken') || localStorage.getItem('isPlatformLogged') === 'true'
   if (isLoggedNow) {
-    router.push('/console/bms')
+    router.push('/console/dashboard')
   } else {
     triggerAuthBox()
   }
@@ -240,6 +255,43 @@ const handleLogout = () => {
   height: 60px !important;
   line-height: 60px !important;
 }
+
+/* 🎯 导航项悬浮动画 */
+.nav-item-animated {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.nav-item-animated .nav-text {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-item-animated .nav-underline {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background-color: var(--pc-brand-primary, #1677FF);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* 鼠标悬浮：横线从中间向两边展开 */
+.nav-item-animated:hover .nav-underline {
+  width: 80%;
+}
+
+/* 鼠标离开：横线从两边收缩到中间 */
+.nav-item-animated:not(:hover) .nav-underline {
+  width: 0;
+}
+
 .header-right {
   display: flex;
   align-items: center;
