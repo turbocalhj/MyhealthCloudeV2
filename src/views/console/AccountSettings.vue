@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
 
@@ -86,6 +86,22 @@ const accountForm = reactive({
   currentPassword: '',
   newPassword: '',
   confirmPassword: ''
+})
+
+// 页面加载时读取已保存的用户信息
+onMounted(() => {
+  const savedInfo = localStorage.getItem('platform_user_info')
+  if (savedInfo) {
+    try {
+      const info = JSON.parse(savedInfo)
+      accountForm.username = info.username || '测评中心'
+      accountForm.nickname = info.nickname || ''
+      accountForm.email = info.email || ''
+      accountForm.phone = info.phone || ''
+    } catch {
+      // 忽略解析错误
+    }
+  }
 })
 
 const validateConfirmPassword = (_rule: unknown, value: string, callback: (error?: Error) => void) => {
@@ -122,8 +138,15 @@ const handleSubmit = async () => {
     if (valid) {
       submitting.value = true
       try {
-        // 模拟提交请求
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        // 保存用户信息到 localStorage
+        const userInfo = {
+          username: accountForm.username,
+          nickname: accountForm.nickname,
+          email: accountForm.email,
+          phone: accountForm.phone
+        }
+        localStorage.setItem('platform_user_info', JSON.stringify(userInfo))
+        
         ElMessage.success('账户信息修改成功')
       } catch {
         ElMessage.error('修改失败，请稍后重试')
@@ -135,9 +158,28 @@ const handleSubmit = async () => {
 }
 
 const handleReset = () => {
-  accountForm.nickname = ''
-  accountForm.email = ''
-  accountForm.phone = ''
+  // 重置为已保存的值或默认值
+  const savedInfo = localStorage.getItem('platform_user_info')
+  if (savedInfo) {
+    try {
+      const info = JSON.parse(savedInfo)
+      accountForm.username = info.username || '测评中心'
+      accountForm.nickname = info.nickname || ''
+      accountForm.email = info.email || ''
+      accountForm.phone = info.phone || ''
+    } catch {
+      accountForm.username = '测评中心'
+      accountForm.nickname = ''
+      accountForm.email = ''
+      accountForm.phone = ''
+    }
+  } else {
+    accountForm.username = '测评中心'
+    accountForm.nickname = ''
+    accountForm.email = ''
+    accountForm.phone = ''
+  }
+  
   accountForm.currentPassword = ''
   accountForm.newPassword = ''
   accountForm.confirmPassword = ''

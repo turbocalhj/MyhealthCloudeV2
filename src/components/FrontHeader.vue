@@ -87,13 +87,69 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu class="user-dropdown-menu">
-              <el-dropdown-item command="/console/dashboard">控制台首页</el-dropdown-item>
-              <el-dropdown-item command="/console/bms">裸金属服务</el-dropdown-item>
-              <el-dropdown-item command="/console/ecs">云主机服务</el-dropdown-item>
-              <el-dropdown-item command="/console/container">容器服务</el-dropdown-item>
-              <el-dropdown-item command="/console/order-apply">我的申请</el-dropdown-item>
-              <el-dropdown-item command="/console/account-settings">账户设置</el-dropdown-item>
-              <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+              <!-- 用户信息头部 -->
+              <div class="dropdown-user-header">
+                <div class="user-avatar-circle">
+                  <svg viewBox="0 0 1024 1024" class="user-avatar-icon">
+                    <path d="M512 512a192 192 0 1 0 0-384 192 192 0 0 0 0 384z m0 64c-143.6 0-448 72.2-448 215.4V832h896v-40.6c0-143.2-304.4-215.4-448-215.4z" />
+                  </svg>
+                </div>
+                <div class="user-info">
+                  <div class="user-name">测评中心</div>
+                  <div class="user-status">
+                    <span class="status-dot"></span>
+                    <span>在线</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 功能分组 -->
+              <div class="dropdown-section">
+                <div class="section-title">服务入口</div>
+                <el-dropdown-item command="/console/dashboard" class="dropdown-item-with-icon">
+                  <el-icon class="item-icon"><Odometer /></el-icon>
+                  <span>控制台首页</span>
+                </el-dropdown-item>
+                <el-dropdown-item command="/console/bms" class="dropdown-item-with-icon">
+                  <el-icon class="item-icon"><Monitor /></el-icon>
+                  <span>裸金属服务</span>
+                </el-dropdown-item>
+                <el-dropdown-item command="/console/ecs" class="dropdown-item-with-icon">
+                  <el-icon class="item-icon"><Cpu /></el-icon>
+                  <span>云主机服务</span>
+                </el-dropdown-item>
+                <el-dropdown-item command="/console/container" class="dropdown-item-with-icon">
+                  <el-icon class="item-icon"><Connection /></el-icon>
+                  <span>容器服务</span>
+                </el-dropdown-item>
+              </div>
+
+              <el-divider class="dropdown-divider" />
+
+              <!-- 管理分组 -->
+              <div class="dropdown-section">
+                <div class="section-title">管理中心</div>
+                <el-dropdown-item command="/console/order-apply" class="dropdown-item-with-icon">
+                  <el-icon class="item-icon"><Document /></el-icon>
+                  <span>我的申请</span>
+                </el-dropdown-item>
+                <el-dropdown-item command="/console/account-settings" class="dropdown-item-with-icon">
+                  <el-icon class="item-icon"><Edit /></el-icon>
+                  <span>信息修改</span>
+                </el-dropdown-item>
+                <el-dropdown-item command="/console/account-settings" class="dropdown-item-with-icon">
+                  <el-icon class="item-icon"><Setting /></el-icon>
+                  <span>账户设置</span>
+                </el-dropdown-item>
+              </div>
+
+              <el-divider class="dropdown-divider" />
+
+              <!-- 退出登录 -->
+              <el-dropdown-item command="logout" class="dropdown-item-logout">
+                <el-icon class="item-icon"><SwitchButton /></el-icon>
+                <span>退出登录</span>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -127,7 +183,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus' 
-import { ShoppingCart } from '@element-plus/icons-vue'
+import { ShoppingCart, Odometer, Monitor, Cpu, Connection, Document, Setting, SwitchButton, Edit } from '@element-plus/icons-vue'
 import { useCartStore } from '@/store/modules/cart'
 import { useUserStore } from '@/store/modules/user'
 
@@ -305,10 +361,14 @@ const handleLogout = () => {
   transition: color 0.3s;
   display: inline-flex;
   align-items: center;
-  outline: none;
+  outline: none !important;
 }
 .tool-link:hover, .dropdown-link:hover {
   color: #409eff;
+}
+.tool-link:focus, .dropdown-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 .msg-badge :deep(.el-badge__content) {
   top: 5px;
@@ -318,7 +378,27 @@ const handleLogout = () => {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  outline: none !important;
 }
+.user-profile:focus, .custom-hover-profile:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Element Plus 下拉框去除 focus 黑圈 */
+:deep(.el-dropdown) {
+  outline: none !important;
+}
+:deep(.el-dropdown:focus),
+:deep(.el-dropdown:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+:deep(.el-tooltip__trigger:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .username {
   font-size: 14px;
   color: #000000;
@@ -337,7 +417,156 @@ const handleLogout = () => {
   fill: #409eff !important;
 }
 .user-dropdown-menu {
-  width: 160px;
+  width: 220px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+}
+
+/* 用户信息头部 */
+.dropdown-user-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+}
+
+.user-avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-avatar-icon {
+  width: 24px;
+  height: 24px;
+  fill: #ffffff;
+}
+
+.user-info {
+  margin-left: 12px;
+  flex: 1;
+}
+
+.user-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.user-status {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  margin-right: 6px;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* 功能分组 */
+.dropdown-section {
+  padding: 8px 0;
+}
+
+.section-title {
+  padding: 6px 16px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 带图标的菜单项 */
+.dropdown-item-with-icon {
+  padding: 10px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px;
+  transition: all 0.2s ease;
+  border-radius: 0;
+  margin: 0 8px;
+  border-radius: 8px;
+}
+
+.dropdown-item-with-icon:hover {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+}
+
+.item-icon {
+  font-size: 16px;
+  color: #6b7280;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dropdown-item-with-icon:hover .item-icon {
+  color: #6366f1;
+}
+
+.dropdown-item-with-icon span {
+  font-size: 14px;
+  color: #374151;
+  transition: color 0.2s ease;
+}
+
+.dropdown-item-with-icon:hover span {
+  color: #6366f1;
+  font-weight: 500;
+}
+
+/* 分隔线 */
+.dropdown-divider {
+  margin: 0 !important;
+  border-color: #f0f0f0;
+}
+
+/* 退出登录 */
+.dropdown-item-logout {
+  padding: 10px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px;
+  margin: 0 8px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item-logout:hover {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.08) 100%) !important;
+}
+
+.dropdown-item-logout .item-icon {
+  color: #ef4444;
+}
+
+.dropdown-item-logout span {
+  font-size: 14px;
+  color: #ef4444;
 }
 .disabled-menu-item {
   color: #c0c4cc !important;
