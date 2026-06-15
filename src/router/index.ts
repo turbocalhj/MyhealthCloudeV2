@@ -12,8 +12,8 @@ NProgress.configure({
   trickleSpeed: 200
 })
 
-// 标记动态路由是否已挂载（模块级变量，页面刷新后自动重置）
-let routesAdded = false
+// 标记动态路由是否已挂载（保留导出，兼容旧代码引用）
+export const routesAdded = true
 
 // 前台展示系统路由（无需权限）
 const constantRoutes = [
@@ -38,6 +38,12 @@ const constantRoutes = [
         name: 'Market',
         component: () => import('@/views/market/index.vue'),
         meta: { title: '智算超市' }
+      },
+      {
+        path: 'market-detail',
+        name: 'MarketDetail',
+        component: () => import('@/views/market/Detail.vue'),
+        meta: { title: '商品详情' }
       },
       {
         path: 'solution',
@@ -78,6 +84,20 @@ const constantRoutes = [
     component: () => import('@/views/Login.vue'), 
     meta: { title: '登录' }
   },
+  // 用户注册
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/views/Register.vue'),
+    meta: { title: '注册' }
+  },
+  // 忘记密码
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('@/views/ForgotPassword.vue'),
+    meta: { title: '忘记密码' }
+  },
   // 兜底路径
   {
     path: '/:pathMatch(.*)*',
@@ -85,7 +105,8 @@ const constantRoutes = [
   }
 ]
 
-// 后台管理系统路由（需根据Token和权限动态挂载）
+// 后台管理系统路由（保留为导出，供权限过滤使用）
+// 实际挂载在 constantRoutes 末尾，简化动态路由逻辑
 export const asyncRoutes = [
   // 控制台主框架
   {
@@ -102,7 +123,7 @@ export const asyncRoutes = [
         meta: { title: '控制台首页', roles: ['admin', 'user'] }
       },
       {
-        path: 'bms', 
+        path: 'bms',
         name: 'ResourceBMS',
         component: () => import('@/views/console/ResourceList.vue'),
         meta: { title: '裸金属', type: 'BMS', roles: ['admin', 'user'] }
@@ -150,10 +171,28 @@ export const asyncRoutes = [
         meta: { title: '资源详情', roles: ['admin', 'user'] }
       },
       {
+        path: 'resource-lifecycle',
+        name: 'ResourceLifecycle',
+        component: () => import('@/views/console/ResourceLifecycle.vue'),
+        meta: { title: '资源生命周期', roles: ['admin', 'user'] }
+      },
+      {
         path: 'order-apply',
         name: 'OrderApply',
         component: () => import('@/views/console/OrderManager.vue'),
         meta: { title: '我的申请', roles: ['admin', 'user'] }
+      },
+      {
+        path: 'order-create',
+        name: 'OrderCreate',
+        component: () => import('@/views/console/OrderCreate.vue'),
+        meta: { title: '创建订单', roles: ['admin', 'user'] }
+      },
+      {
+        path: 'order-detail',
+        name: 'OrderDetail',
+        component: () => import('@/views/console/OrderDetail.vue'),
+        meta: { title: '订单详情', roles: ['admin', 'user'] }
       },
       {
         path: 'order-renew',
@@ -247,9 +286,11 @@ export const asyncRoutes = [
   }
 ]
 
+// 合并所有路由（前台 + 后台 + 财务），避免动态 addRoute 引起的导航问题
+// 仍然保留 meta.roles 用于在路由守卫中做权限检查
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: constantRoutes
+  routes: [...constantRoutes, ...asyncRoutes]
 })
 
 // ==================== 权限过滤工具函数 ====================
@@ -283,11 +324,13 @@ const filterAsyncRoutes = (routes: any[], roles: string[]): any[] => {
   return accessibleRoutes
 }
 
-// ==================== 全局路由前置守卫 (JWT + 动态路由鉴权) ====================
+// ==================== 全局路由前置守卫 (JWT + 权限校验) ====================
+// 注意：路由已经合并到 createRouter 时一次性加载，无需 addRoute
+// 守卫只负责：1) 登录状态检查  2) 角色权限检查
 router.beforeEach(async (to, _from, next) => {
   NProgress.start() // 开始进度条
 
-  // 引入真实 JWT Token 校验机制（替代明文判断）
+  // 引入真实 JWT Token 校验机制
   const token = localStorage.getItem('accessToken')
 
   // 判断目标路径是否属于需要登录保护的私密路由
@@ -299,38 +342,43 @@ router.beforeEach(async (to, _from, next) => {
       NProgress.done()
       next('/main/home')
     } else {
-      // 使用模块级变量标记动态路由是否已挂载
-      if (!routesAdded) {
-        try {
-          // 获取用户角色
-          const userRolesStr = localStorage.getItem('userRoles')
-          const roles = userRolesStr ? JSON.parse(userRolesStr) : ['user']
-
-          // 根据用户权限动态过滤并挂载路由
-          const accessibleRoutes = filterAsyncRoutes(asyncRoutes, roles)
-          
-          // 动态添加有权限的路由
-          accessibleRoutes.forEach(route => {
-            router.addRoute(route)
-          })
-          
-          // 标记路由已挂载
-          routesAdded = true
-          
-          // 路由添加后需要重新触发一次导航，使用完整路径
-          next(to.fullPath)
-        } catch (error) {
-          // 挂载异常，清空缓存打回登录
-          localStorage.removeItem('accessToken')
-          localStorage.removeItem('userRoles')
-          routesAdded = false
-          NProgress.done()
-          next(`/login?redirect=${to.path}`)
+      // 已登录，检查目标路由的角色权限
+      const userRolesStr = localStorage.getItem('userRoles')
+      const roles = userRolesStr ? JSON.parse(userRolesStr) : ['user']
+      
+      // 找到目标路由（可能在 children 中），检查 meta.roles
+      let targetRoute: any = router.getRoutes().find(r => r.path === to.path)
+      if (!targetRoute) {
+        // 可能在 children 里
+        for (const parent of router.getRoutes()) {
+          if (parent.children) {
+            const child = parent.children.find(c => c.path === to.path || `/${c.path}` === to.path || `${parent.path}/${c.path}` === to.path)
+            if (child) {
+              targetRoute = child
+              break
+            }
+          }
         }
-      } else {
-        // 动态路由已挂载，直接放行
-        next()
       }
+      
+      const routeRoles = targetRoute?.meta?.roles as string[] | undefined
+      if (routeRoles && routeRoles.length > 0) {
+        const hasAccess = roles.some((r: string) => routeRoles.includes(r))
+        if (!hasAccess) {
+          // 无权限访问此路由
+          ElMessage({
+            message: '您当前角色无权访问该页面',
+            type: 'error',
+            duration: 3000
+          })
+          NProgress.done()
+          next('/main/home')
+          return
+        }
+      }
+      
+      // 通过权限检查，放行
+      next()
     }
   } else {
     //  没有 Token 的情况
@@ -354,6 +402,11 @@ router.beforeEach(async (to, _from, next) => {
 // 路由后置守卫：关闭进度条
 router.afterEach(() => {
   NProgress.done()
+})
+
+// 调试：记录所有路由错误
+router.onError((error) => {
+  console.error('[Router Error]:', error)
 })
 
 export default router

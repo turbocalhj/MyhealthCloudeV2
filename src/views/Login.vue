@@ -20,6 +20,14 @@
             立即登录
           </el-button>
         </el-form-item>
+
+        <el-form-item>
+          <div class="extra-links">
+            <el-link type="primary" @click="nativeRouter.push('/register')">注册新账户</el-link>
+            <span class="divider">|</span>
+            <el-link type="info" @click="nativeRouter.push('/forgot-password')">忘记密码？</el-link>
+          </div>
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -134,5 +142,18 @@ const handleLogin = async () => {
 
 .submit-btn {
   width: 100%;
+}
+
+.extra-links {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.divider {
+  color: #dcdfe6;
 }
 </style>

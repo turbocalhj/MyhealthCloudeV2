@@ -6,8 +6,12 @@
           <div class="select-cell">
             <span class="cell-lbl">状态</span>
             <el-select v-model="activeStatusSelect" placeholder="选择状态" style="width: 160px" clearable>
-              <el-option label="待审批" value="待审批" />
-              <el-option label="审批通过" value="审批通过" />
+              <el-option label="全部状态" value="" />
+              <el-option label="待支付" value="待支付" />
+              <el-option label="已支付" value="已支付" />
+              <el-option label="处理中" value="处理中" />
+              <el-option label="已完成" value="已完成" />
+              <el-option label="已取消" value="已取消" />
             </el-select>
           </div>
           <div class="select-cell">
@@ -35,7 +39,7 @@
           <el-table-column prop="price" label="金额" width="100" />
           <el-table-column prop="status" label="状态" width="120">
             <template #default="scope">
-              <span class="orange-pending-status-node">
+              <span :class="getStatusClass(scope.row.status)">
                 <span class="dot-blink-inner">●</span> {{ scope.row.status }}
               </span>
             </template>
@@ -144,10 +148,11 @@ const isRenewView = computed(() => route.path.includes('renew'))
 const isQuitView = computed(() => route.path.includes('quit'))
 
 const applyRawList = ref([
-  { applyId: 'RA202605311246282536', applicant: '张海洋', price: '0.00', status: '待审批', applyTime: '2026-05-31 12:46:28', updateTime: '2026-05-31 12:46:28' },
-  { applyId: 'RA202605291126404900', applicant: '张海洋', price: '0.00', status: '待审批', applyTime: '2026-05-29 11:26:40', updateTime: '2026-05-29 11:26:40' },
-  { applyId: 'RA202605291119310432', applicant: '张海洋', price: '0.00', status: '待审批', applyTime: '2026-05-29 11:19:31', updateTime: '2026-05-29 11:19:31' },
-  { applyId: 'RA202605291108592469', applicant: '张海洋', price: '0.00', status: '待审批', applyTime: '2026-05-29 11:08:59', updateTime: '2026-05-29 11:08:59' }
+  { applyId: 'ORD202606101246282536', applicant: '张海洋', price: '2,400.00', status: '待支付', applyTime: '2026-06-10 12:46:28', updateTime: '2026-06-10 12:46:28' },
+  { applyId: 'ORD202606091126404900', applicant: '张海洋', price: '5,800.00', status: '已支付', applyTime: '2026-06-09 11:26:40', updateTime: '2026-06-09 14:30:15' },
+  { applyId: 'ORD202606081119310432', applicant: '张海洋', price: '1,200.00', status: '处理中', applyTime: '2026-06-08 11:19:31', updateTime: '2026-06-09 09:00:00' },
+  { applyId: 'ORD202606071108592469', applicant: '张海洋', price: '3,600.00', status: '已完成', applyTime: '2026-06-07 11:08:59', updateTime: '2026-06-08 16:45:30' },
+  { applyId: 'ORD202606061055321234', applicant: '张海洋', price: '800.00', status: '已取消', applyTime: '2026-06-06 10:55:32', updateTime: '2026-06-06 11:20:00' }
 ])
 
 const filteredApplyData = computed(() => {
@@ -161,14 +166,22 @@ const handleSearch = () => {
   ElMessage.success('订购工单清单载入完成') 
 }
 
+const getStatusClass = (status: string) => {
+  const classMap: Record<string, string> = {
+    '待支付': 'status-pending-pay',
+    '已支付': 'status-paid',
+    '处理中': 'status-processing',
+    '已完成': 'status-completed',
+    '已取消': 'status-cancelled'
+  }
+  return classMap[status] || 'orange-pending-status-node'
+}
+
 const goToDetail = (row: any) => {
   router.push({
-    path: '/console/apply-detail',
+    path: '/console/order-detail',
     query: {
-      applyId: row.applyId,
-      applicant: row.applicant,
-      applyTime: row.applyTime,
-      price: row.price
+      orderId: row.applyId
     }
   })
 }
@@ -273,6 +286,12 @@ watch(() => route.path, () => {
 /* 状态标签 */
 .orange-pending-status-node { color: #FAAD14; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 400; }
 .dot-blink-inner { font-size: 10px; }
+
+.status-pending-pay { color: #FAAD14; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 400; }
+.status-paid { color: #1677FF; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 400; }
+.status-processing { color: #722ED1; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 400; }
+.status-completed { color: #52C41A; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 400; }
+.status-cancelled { color: #999; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 400; }
 
 .pagination-footer-flex-row { display: flex; justify-content: flex-end; padding-top: 20px; }
 </style>

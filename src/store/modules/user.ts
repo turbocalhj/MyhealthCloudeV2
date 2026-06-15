@@ -66,6 +66,45 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  /**
+   * 获取未读消息数量
+   */
+  const getUnreadCount = (): number => {
+    syncMessageStatus()
+    return unreadCount.value
+  }
+
+  /**
+   * 标记单条消息为已读
+   */
+  const markAsRead = (messageId: number | string): void => {
+    const localData = localStorage.getItem('platform_system_messages')
+    if (localData) {
+      const allMsgs = JSON.parse(localData) as MessageItem[]
+      const msg = allMsgs.find(m => m.id === messageId)
+      if (msg) {
+        msg.status = '已读'
+        localStorage.setItem('platform_system_messages', JSON.stringify(allMsgs))
+        syncMessageStatus()
+        window.dispatchEvent(new CustomEvent('update-message-bell-badge'))
+      }
+    }
+  }
+
+  /**
+   * 标记所有消息为已读
+   */
+  const markAllAsRead = (): void => {
+    const localData = localStorage.getItem('platform_system_messages')
+    if (localData) {
+      const allMsgs = JSON.parse(localData) as MessageItem[]
+      allMsgs.forEach(m => { m.status = '已读' })
+      localStorage.setItem('platform_system_messages', JSON.stringify(allMsgs))
+      syncMessageStatus()
+      window.dispatchEvent(new CustomEvent('update-message-bell-badge'))
+    }
+  }
+
   return { 
     token,
     roles,
@@ -76,7 +115,10 @@ export const useUserStore = defineStore('user', () => {
     hasAnyRole,
     setAuth,
     clearAuth,
-    syncMessageStatus 
+    syncMessageStatus,
+    getUnreadCount,
+    markAsRead,
+    markAllAsRead
   }
 }, {
   persist: {

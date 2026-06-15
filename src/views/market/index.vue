@@ -136,6 +136,32 @@
         </span>
       </div>
       <div class="toolbar-right">
+        <!-- 价格筛选 -->
+        <div class="price-filter-box">
+          <span class="price-filter-label">价格</span>
+          <el-input-number 
+            v-model="priceMin" 
+            :min="0" 
+            :precision="0" 
+            size="small" 
+            placeholder="最低" 
+            class="price-input"
+            controls-position="right"
+            @change="applyPriceFilter"
+          />
+          <span class="price-separator">-</span>
+          <el-input-number 
+            v-model="priceMax" 
+            :min="0" 
+            :precision="0" 
+            size="small" 
+            placeholder="最高" 
+            class="price-input"
+            controls-position="right"
+            @change="applyPriceFilter"
+          />
+        </div>
+
         <el-select v-model="sortValue" placeholder="排序" class="sort-selector">
           <el-option label="默认排序" value="default" />
           <el-option label="价格从低到高" value="priceAsc" />
@@ -176,6 +202,7 @@
             :key="product.id" 
             class="product-card" 
             shadow="hover"
+            @click="goToDetail(product)"
           >
             <div class="card-tag">
               {{ product.marketTag }}
@@ -225,7 +252,7 @@
               </div>
             </div>
 
-            <div class="card-actions">
+            <div class="card-actions" @click.stop>
               <template v-if="!product.isOutOfStock">
                 <el-button 
                   size="small" 
@@ -268,12 +295,14 @@ import { ref, reactive, onMounted, onUnmounted, watch, computed } from 'vue'
 import { Filter, ArrowUp, Search, Loading } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import type { CheckboxValueType } from 'element-plus'
+import { useRouter } from 'vue-router'
 
 import { useCartStore } from '@/store/modules/cart'
 import { fetchMarketProducts } from '@/api/market'
 import type { ComputingProduct } from '@/types'
 
 const cartStore = useCartStore()
+const router = useRouter()
 
 const isFirstRender = ref(true)
 const isCollapsed = ref(false)
@@ -283,6 +312,16 @@ const sortValue = ref('default')
 const searchQuery = ref('')
 const activeSearchQuery = ref('')
 const pageLoading = ref(true)
+
+// 价格筛选
+const priceMin = ref<number | null>(null)
+const priceMax = ref<number | null>(null)
+const activePriceMin = ref<number | null>(null)
+const activePriceMax = ref<number | null>(null)
+const applyPriceFilter = () => {
+  activePriceMin.value = priceMin.value
+  activePriceMax.value = priceMax.value
+}
 
 // 🚀 行级按钮防抖 Loading 映射表
 const btnLoadingMap = ref<Record<string, boolean>>({})
@@ -353,6 +392,11 @@ const filteredProducts = computed(() => {
     if (!filterForm.gpuBrands.includes(product.metaGpuBrand)) return false
     if (!filterForm.gpuCounts.includes(product.metaGpuCount)) return false
     if (!filterForm.subsidies.includes(product.metaSubsidy)) return false
+    
+    // 价格筛选
+    if (activePriceMin.value !== null && product.price < activePriceMin.value) return false
+    if (activePriceMax.value !== null && product.price > activePriceMax.value) return false
+    
     if (activeSearchQuery.value.trim()) {
       const q = activeSearchQuery.value.toLowerCase()
       const matchName = product.name.toLowerCase().includes(q)
@@ -383,6 +427,7 @@ const loadMoreAnchor = ref<HTMLElement | null>(null)
 const displayProducts = computed(() => { return filteredProducts.value.slice(0, pagedCount.value) })
 const hasMore = computed(() => { return pagedCount.value < filteredProducts.value.length })
 const triggerSearch = () => { activeSearchQuery.value = searchQuery.value }
+const goToDetail = (product: ComputingProduct) => { router.push({ path: '/main/market-detail', query: { id: product.id } }) }
 
 watch([filteredProducts, sortValue], () => { pagedCount.value = pageSize })
 const toggleCollapse = () => { isCollapsed.value = !isCollapsed.value }
@@ -459,6 +504,12 @@ onUnmounted(() => {
 .total-count-text { font-size: 14px; color: var(--pc-text-secondary); }
 .count-highlight { color: var(--pc-brand-primary); font-weight: 600; margin-left: 2px; margin-right: 2px; }
 .toolbar-right { display: flex; align-items: center; gap: 16px; }
+
+.price-filter-box { display: flex; align-items: center; gap: 8px; }
+.price-filter-label { font-size: 13px; color: var(--pc-text-secondary); white-space: nowrap; }
+.price-input { width: 100px; }
+.price-input :deep(.el-input__wrapper) { padding: 0 8px; }
+.price-separator { color: var(--pc-text-muted); font-size: 14px; }
 .sort-selector { width: 200px !important; }
 :deep(.el-input__wrapper) { height: 40px !important; border-radius: 6px !important; }
 .search-input-box { display: flex; align-items: center; width: 300px; height: 40px; background: var(--pc-bg-card); border: 1px solid var(--pc-border-base); border-radius: 6px; overflow: hidden; box-sizing: border-box; transition: border-color 0.2s ease; }
@@ -470,7 +521,7 @@ onUnmounted(() => {
 .market-grid-container { width: 100%; box-sizing: border-box; }
 .market-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; }
 .empty-placeholder { text-align: center; padding-top: 100px; padding-bottom: 100px; color: var(--pc-text-muted); font-size: 15px; }
-.product-card { position: relative; width: 100%; height: 455px; background: var(--pc-bg-card); border-radius: 12px; border: 1px solid var(--pc-border-light); box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+.product-card { position: relative; width: 100%; height: 455px; background: var(--pc-bg-card); border-radius: 12px; border: 1px solid var(--pc-border-light); box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; cursor: pointer; }
 .product-card :deep(.el-card__body) { padding: 0; height: 100%; display: flex; flex-direction: column; }
 .product-card:hover { transform: translateY(-4px); border-color: var(--pc-border-base); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02) !important; }
 .card-tag { position: absolute; top: 0; right: 24px; background-color: var(--pc-brand-danger); color: white; font-size: 11px; font-weight: bold; padding-top: 4px; padding-bottom: 4px; padding-left: 10px; padding-right: 10px; border-radius: 0 0 6px 6px; z-index: 5; }

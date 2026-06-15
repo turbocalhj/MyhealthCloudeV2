@@ -90,8 +90,7 @@
         <el-button 
           type="primary" 
           @click="handleCheckout" 
-          :disabled="cartStore.selectedCount === 0" 
-          :loading="checkoutLoading"
+          :disabled="cartStore.selectedCount === 0"
         >
           去结算
         </el-button>
@@ -102,7 +101,6 @@
 
 <script setup lang="ts">
 // 购物车模块：管理算力资源的暂存、结算流程
-import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Close, Minus, Plus } from '@element-plus/icons-vue'
 import { useCartStore } from '@/store/modules/cart'
@@ -110,7 +108,6 @@ import { useRouter } from 'vue-router'
 
 const cartStore = useCartStore()
 const router = useRouter()
-const checkoutLoading = ref(false)
 
 const handleClearCart = () => {
   ElMessageBox.confirm(
@@ -142,14 +139,9 @@ const handleCheckout = () => {
     return
   }
 
-  // 防抖与Loading交互优化
-  if (checkoutLoading.value) return
-  checkoutLoading.value = true
-  
-  setTimeout(() => {
-    ElMessage.success('订单结算功能正在建设中...')
-    checkoutLoading.value = false
-  }, 800)
+  // 跳转到订单创建页面
+  cartStore.closeCartDrawer()
+  router.push('/console/order-create')
 }
 </script>
 

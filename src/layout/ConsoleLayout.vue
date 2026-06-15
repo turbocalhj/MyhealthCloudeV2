@@ -107,6 +107,11 @@
             <el-menu-item index="/console/expire-contract">合同到期管理</el-menu-item>
           </el-sub-menu>
 
+          <el-menu-item index="/console/resource-lifecycle">
+            <el-icon><Connection /></el-icon>
+            <span>资源生命周期</span>
+          </el-menu-item>
+
           <el-menu-item index="/finance/order">
             <el-icon><Wallet /></el-icon>
             <span>费用中心</span>
@@ -148,11 +153,7 @@
         </div>
         
         <div class="content-wrapper">
-          <router-view v-slot="{ Component }">
-            <transition name="fade-transform" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
+          <router-view />
         </div>
       </el-main>
     </el-container>
@@ -205,10 +206,12 @@ const currentRouteTitle = computed(() => {
 onMounted(() => {
   userStore.syncMessageStatus()
   window.addEventListener('storage', userStore.syncMessageStatus)
+  window.addEventListener('update-message-bell-badge', userStore.syncMessageStatus)
 })
 
 onUnmounted(() => {
   window.removeEventListener('storage', userStore.syncMessageStatus)
+  window.removeEventListener('update-message-bell-badge', userStore.syncMessageStatus)
 })
 
 const handleMessageDropdown = (command: string) => {

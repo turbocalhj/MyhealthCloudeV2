@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus' 
 import { ShoppingCart, Odometer, Monitor, Cpu, Connection, Document, Setting, SwitchButton, Edit } from '@element-plus/icons-vue'
@@ -209,6 +209,15 @@ watch(
   },
   { immediate: true }
 )
+
+onMounted(() => {
+  userStore.syncMessageStatus()
+  window.addEventListener('update-message-bell-badge', userStore.syncMessageStatus)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('update-message-bell-badge', userStore.syncMessageStatus)
+})
 
 const handleMessageDropdown = (command: string) => {
   if (command === 'goMessageCenter') {
