@@ -321,6 +321,14 @@ const handleLogout = () => {
   line-height: 60px !important;
 }
 
+/* 去掉 element-plus 自带的 is-active 蓝色下边框，避免与自定义下划线重叠 */
+:deep(.el-menu--horizontal > .el-menu-item.is-active) {
+  border-bottom: none !important;
+}
+:deep(.el-menu--horizontal > .el-menu-item.is-active::after) {
+  display: none !important;
+}
+
 /* 🎯 导航项悬浮动画 */
 .nav-item-animated {
   position: relative !important;
