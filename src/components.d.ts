@@ -67,4 +67,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SeamlessScroll: typeof import('./components/SeamlessScroll.vue')['default']
   }
+  export interface GlobalDirectives {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }

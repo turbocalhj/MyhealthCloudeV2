@@ -26,4 +26,14 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  server: {
+    // 将 /api 请求代理到本地 Node 后端
+    // 后端启动：cd server && npm install && npm start
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      }
+    }
+  }
 })

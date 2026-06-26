@@ -1,0 +1,110 @@
+{
+  "resources": [
+    {
+      "id": "8731370905908269056",
+      "name": "yintestLiantong",
+      "type": "BMS",
+      "region": "萧山区",
+      "gpuModel": "Huawei Atlas 300",
+      "gpuNum": 2,
+      "vram": "64GB",
+      "cpu": "104核",
+      "memory": "256GB",
+      "systemDisk": "--",
+      "powerStatus": "on",
+      "createdAt": "2026-01-15 09:00:00"
+    },
+    {
+      "id": "825416335817216000",
+      "name": "sherrytestalam1",
+      "type": "BMS",
+      "region": "拱墅区",
+      "gpuModel": "Ascend 910B2",
+      "gpuNum": 8,
+      "vram": "64GB",
+      "cpu": "128核",
+      "memory": "1536GB",
+      "systemDisk": "894GB",
+      "powerStatus": "rebooting",
+      "createdAt": "2026-01-16 10:00:00"
+    },
+    {
+      "id": "818855540908134400",
+      "name": "work-910b-eekzk1",
+      "type": "BMS",
+      "region": "--",
+      "gpuModel": "--",
+      "gpuNum": "--",
+      "vram": "--",
+      "cpu": "192核",
+      "memory": "1024GB",
+      "systemDisk": "894GB",
+      "powerStatus": "on",
+      "createdAt": "2026-01-17 11:00:00"
+    },
+    {
+      "id": "8716cee3-743b-4a72-a831",
+      "name": "sssss",
+      "type": "BMS",
+      "region": "--",
+      "gpuModel": "--",
+      "gpuNum": "--",
+      "vram": "--",
+      "cpu": "40核",
+      "memory": "384GB",
+      "systemDisk": "480GB",
+      "powerStatus": "off",
+      "createdAt": "2026-01-18 12:00:00"
+    },
+    {
+      "id": "i-2zef1oxtc4jymmbr4lk0",
+      "name": "jky0529",
+      "type": "ECS",
+      "region": "西湖区",
+      "gpuModel": "昆仑芯GPU-X3",
+      "gpuNum": 1,
+      "vram": "32GB",
+      "cpu": "12核",
+      "memory": "96GB",
+      "intranetIp": "172.16.0.97",
+      "powerStatus": "on",
+      "createdAt": "2026-02-01 09:00:00"
+    },
+    {
+      "id": "i-2ze654pbbvejm9to6ivi",
+      "name": "测试0522",
+      "type": "ECS",
+      "region": "西湖区",
+      "gpuModel": "昆仑芯GPU-X3",
+      "gpuNum": 1,
+      "vram": "32GB",
+      "cpu": "12核",
+      "memory": "96GB",
+      "intranetIp": "172.27.73.2",
+      "powerStatus": "off",
+      "createdAt": "2026-02-02 10:00:00"
+    },
+    {
+      "id": "7bfa46bf-94eb-42e1-827b-01",
+      "name": "event-exporter",
+      "type": "CONTAINER",
+      "region": "拱墅区",
+      "cpu": "1核",
+      "memory": "0.39GB",
+      "namespace": "kube-ops",
+      "powerStatus": "on",
+      "createdAt": "2026-03-01 09:00:00"
+    },
+    {
+      "id": "7bfa46bf-94eb-42e1-827b-02",
+      "name": "metrics-server",
+      "type": "CONTAINER",
+      "region": "拱墅区",
+      "cpu": "2核",
+      "memory": "0.5GB",
+      "namespace": "kube-ops",
+      "powerStatus": "on",
+      "createdAt": "2026-03-01 09:30:00"
+    }
+  ]
+}

@@ -16,7 +16,8 @@
 
     <div class="asset-table-card">
       <el-table 
-        :data="computedActiveDataset" 
+        :data="resourceList" 
+        v-loading="loading"
         style="width: 100%"
         size="default"
         :header-cell-style="{ background: '#F7F8FA', color: '#1D2129', fontWeight: '500', height: '44px' }"
@@ -78,6 +79,20 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 分页 -->
+      <div class="pagination-wrapper">
+        <el-pagination
+          v-model:current-page="page"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50]"
+          :total="total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+          @size-change="loadData"
+          @current-change="loadData"
+        />
+      </div>
     </div>
 
     <el-dialog v-model="destroyDialogVisible" title="安全风险提示" width="460px" :align-center="true">
@@ -99,103 +114,152 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-
-interface ResourceItem {
-  id: string
-  name: string
-  region: string
-  cpu: string
-  memory: string
-  powerStatus: string
-  gpuModel?: string
-  gpuNum?: string | number
-  vram?: string
-  systemDisk?: string
-  intranetIp?: string
-  namespace?: string
-}
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  listResourcesApi,
+  powerOnApi,
+  rebootApi,
+  powerOffApi,
+  deleteResourceApi,
+  type ResourceItem,
+  type ResourceType
+} from '@/api/resource'
 
 const route = useRoute()
 const router = useRouter()
 const localQueryText = ref('')
 const destroyDialogVisible = ref(false)
-const selectedRowData = ref<any>(null)
+const selectedRowData = ref<ResourceItem | null>(null)
 
-const activeType = computed(() => (route.meta.type as string) || 'BMS')
+// 数据状态
+const resourceList = ref<ResourceItem[]>([])
+const total = ref(0)
+const loading = ref(false)
+const page = ref(1)
+const pageSize = ref(10)
 
-// 多态状态机数据集（内置 off、on、rebooting 形态以供验证样式流转）
-const bmsDataset = ref<ResourceItem[]>([
-  { id: '8716cee3-743b-4a72-a83...', name: 'sssss', region: '--', gpuModel: '--', gpuNum: '--', vram: '--', cpu: '40核', memory: '384GB', systemDisk: '480GB', powerStatus: 'off' }, 
-  { id: '8731370905908269056', name: 'yintestLiantong', region: '萧山区', gpuModel: 'Huawei Atlas 300', gpuNum: 2, vram: '64GB', cpu: '104核', memory: '256GB', systemDisk: '--', powerStatus: 'on' },
-  { id: '825416335817216000', name: 'sherrytestalam1', region: '拱墅区', gpuModel: 'Ascend 910B2', gpuNum: 8, vram: '64GB', cpu: '128核', memory: '1536GB', systemDisk: '894GB', powerStatus: 'rebooting' }, // 对应图六“启动”
-  { id: '818855540908134400', name: 'work-910b-eekzk1', region: '--', gpuModel: '--', gpuNum: '--', vram: '--', cpu: '192核', memory: '1024GB', systemDisk: '894GB', powerStatus: 'on' }
-])
+const activeType = computed(() => (route.meta.type as ResourceType) || 'BMS')
 
-const ecsDataset = ref<ResourceItem[]>([
-  { id: 'i-2zef1oxtc4jymmbr4lk0', name: 'jky0529', region: '西湖区', gpuModel: '昆仑芯GPU-...', gpuNum: 1, vram: '32GB', cpu: '12核', memory: '96GB', intranetIp: '172.16.0.97', powerStatus: 'on' },
-  { id: 'i-2ze654pbbvejm9to6ivi', name: '测试0522', region: '西湖区', gpuModel: '昆仑芯GPU-...', gpuNum: 1, vram: '32GB', cpu: '12核', memory: '96GB', intranetIp: '172.27.73.2', powerStatus: 'off' }
-])
+// 加载数据（前后端联动）
+const loadData = async () => {
+  loading.value = true
+  try {
+    const data = await listResourcesApi({
+      type: activeType.value,
+      keyword: localQueryText.value,
+      page: page.value,
+      pageSize: pageSize.value
+    })
+    resourceList.value = data.list
+    total.value = data.total
+  } catch (err: any) {
+    // 拦截器已弹错误，这里不再重复
+    resourceList.value = []
+    total.value = 0
+  } finally {
+    loading.value = false
+  }
+}
 
-const containerDataset = ref<ResourceItem[]>([
-  { id: '7bfa46bf-94eb-42e1-827b-9864307f6...', name: 'event-exporter', region: '拱墅区', cpu: '1核', memory: '0.39GB', namespace: 'kube-ops', powerStatus: 'on' }
-])
-
-const computedActiveDataset = computed(() => {
-  let source: ResourceItem[] = bmsDataset.value
-  if (activeType.value === 'ECS') source = ecsDataset.value
-  if (activeType.value === 'CONTAINER') source = containerDataset.value
-  if (!localQueryText.value) return source
-  return source.filter(item => item.name.includes(localQueryText.value) || item.id.includes(localQueryText.value))
+// 切换 tab 类型时重置 + 重新加载
+watch(activeType, () => {
+  page.value = 1
+  localQueryText.value = ''
+  loadData()
 })
 
-const handleFilterSearch = () => { ElMessage.success('计算视图已同步更新') }
-const handleFilterReset = () => { localQueryText.value = '' }
+// 初次挂载
+onMounted(() => {
+  loadData()
+})
 
-const navigateToDetailPage = (row: any) => {
+const handleFilterSearch = () => {
+  page.value = 1
+  loadData()
+}
+const handleFilterReset = () => {
+  localQueryText.value = ''
+  page.value = 1
+  loadData()
+}
+
+const navigateToDetailPage = (row: ResourceItem) => {
   router.push({
     path: '/console/resource-detail',
     query: { ...row }
   })
 }
 
-const togglePowerOn = (row: any) => {
-  row.powerStatus = 'on'
-  ElMessage.success(`物理实例 [${row.name}] 上电引导开机成功。`)
+// 开机
+const togglePowerOn = async (row: ResourceItem) => {
+  if (row.powerStatus === 'rebooting') {
+    // 启动中状态：实际是开机动作
+    try {
+      const data = await powerOnApi(row.id)
+      Object.assign(row, data)
+      ElMessage.success(`物理实例 [${row.name}] 上电引导开机成功。`)
+    } catch (e) {/* 已提示 */}
+    return
+  }
+  // 关机状态：直接开机
+  try {
+    const data = await powerOnApi(row.id)
+    Object.assign(row, data)
+    ElMessage.success(`物理实例 [${row.name}] 上电引导开机成功。`)
+  } catch (e) {/* 已提示 */}
 }
 
-const handleTriggerReboot = (row: any) => {
-  row.powerStatus = 'rebooting'
-  ElMessage.warning(`实例 [${row.name}] 正在执行重启流转。`)
+// 重启
+const handleTriggerReboot = async (row: ResourceItem) => {
+  try {
+    const data = await rebootApi(row.id)
+    Object.assign(row, data)
+    ElMessage.warning(`实例 [${row.name}] 正在执行重启流转。`)
+  } catch (e) {/* 已提示 */}
 }
 
-const handleMoreActionCommand = (command: string, row: any) => {
+const handleMoreActionCommand = async (command: string, row: ResourceItem) => {
   selectedRowData.value = row
   if (command === 'destroy') {
     destroyDialogVisible.value = true
   } else if (command === 'poweroff') {
-    row.powerStatus = 'off'
-    ElMessage.info(`安全关机指令传递就绪。`)
+    try {
+      const data = await powerOffApi(row.id)
+      Object.assign(row, data)
+      ElMessage.info(`安全关机指令传递就绪。`)
+    } catch (e) {/* 已提示 */}
   } else if (command === 'connect') {
     ElMessage.success(`正在连接安全远程终端隧道...`)
   }
 }
 
-const executeMockDestroy = () => {
+const executeMockDestroy = async () => {
   destroyDialogVisible.value = false
-  const id = selectedRowData.value?.id
-  if (activeType.value === 'ECS') ecsDataset.value = ecsDataset.value.filter(item => item.id !== id)
-  else if (activeType.value === 'CONTAINER') containerDataset.value = containerDataset.value.filter(item => item.id !== id)
-  else bmsDataset.value = bmsDataset.value.filter(item => item.id !== id)
-  ElMessage.error(`算力实例已从主集群物理摘除。`)
+  if (!selectedRowData.value) return
+  const row = selectedRowData.value
+  try {
+    await ElMessageBox.confirm(
+      `算力实例 [${row.name}] 一旦销毁将不可恢复，确认继续？`,
+      '二次确认',
+      { confirmButtonText: '确认销毁', cancelButtonText: '取消', type: 'error' }
+    )
+  } catch {
+    return
+  }
+  try {
+    await deleteResourceApi(row.id)
+    ElMessage.error(`算力实例已从主集群物理摘除。`)
+    loadData()
+  } catch (e) {/* 已提示 */}
 }
 </script>
 
 <style scoped>
 .console-dynamic-asset-workspace-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 .asset-search-card { background: #ffffff; padding: 18px 24px; border-radius: 4px; }
+.pagination-wrapper { display: flex; justify-content: flex-end; padding: 16px 0 4px; }
 .search-layout-row { display: flex; justify-content: space-between; align-items: center; }
 .search-input-box { display: flex; align-items: center; gap: 12px; }
 .search-input-box .lbl { font-size: 14px; color: #4E5969; }
