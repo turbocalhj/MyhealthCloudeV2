@@ -1,0 +1,64 @@
+.seamlessScrollContainer {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 30px;
+  padding: 0 24px;
+  height: 48px;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.scrollIcon {
+  display: flex;
+  align-items: center;
+  color: #1677ff;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.scrollWrapper {
+  overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  width: 0;
+}
+
+.scrollTrack {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  animation: marqueeContinuous 30s linear infinite;
+}
+
+.scrollGroup {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.scrollItem {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 120px;
+  font-size: 14px;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.itemDate {
+  color: #888888;
+  margin-right: 8px;
+}
+
+.itemTag {
+  font-weight: 600;
+  color: #222222;
+  margin-right: 8px;
+}
+
+.itemText {
+  color: #444444;
+}

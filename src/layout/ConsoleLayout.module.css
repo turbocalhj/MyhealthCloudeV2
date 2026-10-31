@@ -1,0 +1,172 @@
+.consoleLayout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f7f9fc;
+}
+
+.customHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 0 40px;
+  background-color: #ffffff;
+  height: 60px;
+  line-height: normal;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.toolLink {
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toolLink:hover {
+  color: #409eff;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.username {
+  font-size: 14px;
+  color: #333;
+}
+
+.avatarIcon {
+  font-size: 18px;
+  color: #333;
+}
+
+.userProfile:hover .username,
+.userProfile:hover .avatarIcon {
+  color: #409eff;
+}
+
+.panelHeader {
+  padding: 4px 16px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.msgItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.msgItemTitle {
+  font-size: 13px;
+  color: #606266;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.msgItemTime {
+  font-size: 11px;
+  color: #909399;
+}
+
+.msgEmptyBox {
+  padding: 12px 0;
+}
+
+.panelFooter {
+  text-align: center;
+  font-size: 13px;
+  color: #409eff;
+}
+
+.consoleBody {
+  flex: 1;
+  overflow: hidden;
+}
+
+.consoleAside {
+  background-color: #ffffff;
+  border-right: 1px solid #e5e6eb;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(29, 33, 41, 0.05);
+}
+
+.consoleMenu {
+  border-inline-end: none !important;
+  padding-top: 8px;
+  height: 100%;
+}
+
+.consoleMenu :global(.ant-menu-item),
+.consoleMenu :global(.ant-menu-submenu-title) {
+  height: 48px;
+  line-height: 48px;
+  font-size: 14px;
+  margin: 4px 8px;
+  border-radius: 4px;
+  width: calc(100% - 16px);
+}
+
+.consoleMenu :global(.ant-menu-item-selected) {
+  background-color: #e8f3ff !important;
+  font-weight: 500;
+}
+
+.consoleMainContent {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.breadcrumbContainer {
+  margin-bottom: 20px;
+}
+
+.contentWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.drawerIframeContainer {
+  width: 100%;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+.docIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}

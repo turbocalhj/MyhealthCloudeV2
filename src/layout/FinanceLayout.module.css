@@ -1,0 +1,123 @@
+.financeLayoutWrapper {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f4f6fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.financeGlobalHeader {
+  height: 60px;
+  line-height: normal;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  flex-shrink: 0;
+}
+
+.headerLogoBrand {
+  cursor: pointer;
+}
+
+.logoText {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d2129;
+}
+
+.headerActionsLinks {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.actionBtnItem {
+  font-size: 14px;
+  color: #4e5969;
+  cursor: pointer;
+}
+
+.actionBtnItem:hover {
+  color: #1677ff;
+}
+
+.backConsoleStyle {
+  font-weight: 500;
+}
+
+.userInfoAvatarBlock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.usernameDisplay {
+  font-size: 14px;
+  color: #1d2129;
+}
+
+.financeSubContainer {
+  flex: 1;
+  overflow: hidden;
+  background-color: #f4f6fa;
+}
+
+.financeLeftMenuAside {
+  background-color: #ffffff;
+  border-right: 1px solid #e5e6eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.financeAsideMenuCaption {
+  height: 44px;
+  line-height: 44px;
+  padding-left: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d2129;
+  margin-top: 10px;
+}
+
+.financeCleanMenuInstance {
+  border-inline-end: none !important;
+}
+
+.financeCleanMenuInstance :global(.ant-menu-item),
+.financeCleanMenuInstance :global(.ant-menu-submenu-title) {
+  height: 40px;
+  line-height: 40px;
+  font-size: 14px;
+  margin: 3px 12px;
+  border-radius: 4px;
+  width: calc(100% - 24px);
+  color: #1d2129;
+}
+
+.financeCleanMenuInstance :global(.ant-menu-sub .ant-menu-item) {
+  font-size: 13px;
+  color: #4e5969;
+  padding-left: 44px;
+}
+
+.financeCleanMenuInstance :global(.ant-menu-item-selected) {
+  background-color: #e8f3ff !important;
+  color: #1677ff !important;
+  font-weight: 500;
+}
+
+.financePageContentCanvas {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f4f6fa;
+}
+
+:global(.ant-layout-sider-children) {
+  display: flex;
+  flex-direction: column;
+}
