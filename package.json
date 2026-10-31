@@ -1,8 +1,21 @@
 {
-  "name": "computing-platform",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@turbocalhj/computing-platform",
+  "version": "2.0.0",
+  "description": "算力调度运营平台前端（React 18 + TypeScript + Ant Design 5）",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turbocalhj/compaltedCloudeV1.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
