@@ -29,9 +29,7 @@ export interface ComputingProduct {
 /**
  * 购物车实体项
  */
-export interface CartItem extends ComputingProduct {
-  // 可在未来扩展购物车专属字段，如: buyCount, duration 等
-}
+export type CartItem = ComputingProduct
 
 /**
  * 系统消息实体

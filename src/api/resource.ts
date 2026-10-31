@@ -2,23 +2,9 @@
  * src/api/resource.ts
  *
  * 资源管理 - 业务层 API（前后端联动）
- *
- * 调用 http 工具，路径走 Vite proxy → Node 后端（http://localhost:3001）
- * 后端启动方式：cd server && npm install && npm start
- *
- * 接口列表（与 routes/resources.js 完全一致）：
- *   GET    /api/resources
- *   GET    /api/resources/:id
- *   POST   /api/resources
- *   PUT    /api/resources/:id
- *   DELETE /api/resources/:id
- *   PATCH  /api/resources/:id/power     开机
- *   PATCH  /api/resources/:id/reboot    重启
- *   PATCH  /api/resources/:id/poweroff  关机
+ * 路径走 Vite proxy → Node 后端（http://localhost:3001）
  */
 import http from '@/utils/http'
-
-// ==================== 类型定义 ====================
 
 export type ResourceType = 'BMS' | 'ECS' | 'CONTAINER'
 export type PowerStatus = 'on' | 'off' | 'rebooting'
@@ -68,8 +54,6 @@ export interface CreatePayload {
   namespace?: string
   powerStatus?: PowerStatus
 }
-
-// ==================== 业务层方法 ====================
 
 /** 列表 */
 export function listResourcesApi(query: ListQuery = {}) {
