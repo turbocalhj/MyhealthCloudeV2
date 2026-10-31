@@ -1,0 +1,207 @@
+/* ==========================================================================
+   全局容器
+   ========================================================================== */
+.policyDetailGlobalContainer {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #F7F9FC;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   顶部 Banner (背景图与动态标题)
+   ========================================================================== */
+.policyDetailBannerBlock {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.bannerBackgroundLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.bannerMaskNativeImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bannerTextInner {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  max-width: 1000px;
+  padding: 0 40px;
+}
+
+.bannerMainHeadline {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1677FF;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   中间正文区 (白卡、标识栏、灰框)
+   ========================================================================== */
+.policyDetailContentWrapper {
+  flex: 1;
+  width: 1185px;
+  margin: 40px auto;
+  box-sizing: border-box;
+}
+
+.detailPaperCard {
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 40px;
+  min-height: 500px;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.05);
+  border: 1px solid #E3EBF7;
+}
+
+/* 标题行容器 */
+.sectionTitleRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* 蓝条标识 */
+.blueVerticalBar {
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background-color: #1677FF;
+  border-radius: 2px;
+  margin-right: 12px;
+}
+
+/* 小节标题 */
+.sectionTitleText {
+  font-size: 18px;
+  color: #222222;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* 政策正文灰底框 */
+.policyGreyBox {
+  background-color: #F8FAFC;
+  border: 1px solid #EAEFEF;
+  border-radius: 6px;
+  padding: 40px;
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ==========================================================================
+   底部 Footer
+   ========================================================================== */
+.globalDarkFooterBlock {
+  width: 100%;
+  background-color: #1e1e1e;
+  padding-top: 60px;
+  padding-bottom: 30px;
+  box-sizing: border-box;
+}
+
+.footerInner1600Container {
+  width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.footerTopColumnsRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #333333;
+}
+
+.footerBrandLogoCol {
+  font-size: 22px;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.footerInfoDetailsCol {
+  max-width: 500px;
+}
+
+.columnHeaderTitleLbl {
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+.infoTextLineItem {
+  font-size: 14px;
+  color: #a6a6a6;
+  line-height: 1.8;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.footerContactActionCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footerConsultActionBtn {
+  width: 110px !important;
+  height: 40px !important;
+  background: #1677FF !important;
+  border: 1px solid #1677FF !important;
+  border-radius: 4px !important;
+  color: #FFFFFF !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 0 !important;
+}
+
+.footerConsultActionBtn:hover {
+  background: #4693ff !important;
+  border-color: #4693ff !important;
+}
+
+.footerBottomComplianceBar {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.complianceTextLineRow {
+  font-size: 13px;
+  color: #777777;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.5;
+}

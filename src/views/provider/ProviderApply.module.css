@@ -1,0 +1,238 @@
+/* ==========================================================================
+   全局容器
+   ========================================================================== */
+.applyPageGlobalContainer {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #F7F9FC;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   顶部标题横幅
+   ========================================================================== */
+.applyHeaderBanner {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #1055e8 0%, #1677FF 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+
+.headerTitle {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  letter-spacing: 2px;
+}
+
+.headerSubtitle {
+  font-size: 16px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+/* ==========================================================================
+   主体卡片容器
+   ========================================================================== */
+.applyContentWrapper {
+  flex: 1;
+  width: 1185px;
+  margin: -40px auto 60px auto;
+  z-index: 10;
+  position: relative;
+}
+
+.applyPaperCard {
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 50px 60px;
+  box-shadow: 0 8px 24px rgba(22, 119, 255, 0.08);
+  border: 1px solid #E3EBF7;
+}
+
+/* ==========================================================================
+   步骤条样式
+   ========================================================================== */
+.applyStepsContainer {
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.applyStepsContainer :global(.ant-steps-item-process .ant-steps-item-title) {
+  font-weight: bold;
+  color: #1677FF;
+}
+
+.applyStepsContainer :global(.ant-steps-item-process .ant-steps-item-icon) {
+  color: #1677FF;
+  border-color: #1677FF;
+}
+
+/* ==========================================================================
+   表单区域样式
+   ========================================================================== */
+.applyFormContainer {
+  padding-top: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.formSectionTitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.blueBar {
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background-color: #1677FF;
+  border-radius: 2px;
+  margin-right: 12px;
+}
+
+.formSectionTitle h3 {
+  font-size: 16px;
+  color: #222222;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* 按钮居中处理 */
+.formSubmitRow {
+  margin-top: 40px;
+}
+
+.formSubmitRow :global(.ant-form-item-control-input-content) {
+  display: flex;
+  justify-content: center;
+}
+
+.formSubmitRow :global(.ant-btn + .ant-btn) {
+  margin-left: 12px;
+}
+
+.submitActionBtn {
+  width: 140px !important;
+  height: 40px !important;
+  background: #1677FF !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+}
+
+.submitActionBtn:hover {
+  background: #4096ff !important;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.2);
+}
+
+.cancelActionBtn {
+  width: 120px !important;
+  height: 40px !important;
+  font-size: 14px !important;
+  border-radius: 4px !important;
+}
+
+/* ==========================================================================
+   底部 Footer
+   ========================================================================== */
+.globalDarkFooterBlock {
+  width: 100%;
+  background-color: #1e1e1e;
+  padding-top: 60px;
+  padding-bottom: 30px;
+  box-sizing: border-box;
+}
+
+.footerInner1600Container {
+  width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.footerTopColumnsRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #333333;
+}
+
+.footerBrandLogoCol {
+  color: #FFFFFF;
+}
+
+.footerBrandMainTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.footerInfoDetailsCol {
+  max-width: 500px;
+}
+
+.columnHeaderTitleLbl {
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+.infoTextLineItem {
+  font-size: 14px;
+  color: #a6a6a6;
+  line-height: 1.8;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.footerContactActionCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footerConsultActionBtn {
+  width: 110px !important;
+  height: 40px !important;
+  background: #1677FF !important;
+  border: 1px solid #1677FF !important;
+  border-radius: 4px !important;
+  color: #FFFFFF !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 0 !important;
+}
+
+.footerConsultActionBtn:hover {
+  background: #4693ff !important;
+  border-color: #4693ff !important;
+}
+
+.footerBottomComplianceBar {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.complianceTextLineRow {
+  font-size: 13px;
+  color: #777777;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
