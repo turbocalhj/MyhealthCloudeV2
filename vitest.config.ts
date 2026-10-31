@@ -1,16 +1,16 @@
 import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import react from '@vitejs/plugin-react'
+import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
-    },
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
   },
   test: {
-    environment: 'happy-dom',
+    environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/__tests__/setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
@@ -21,9 +21,8 @@ export default defineConfig({
         'node_modules/',
         'src/__tests__/',
         '**/*.d.ts',
-        '**/auto-import.d.ts',
-        '**/components.d.ts',
-      ],
-    },
-  },
+        '**/*.module.css'
+      ]
+    }
+  }
 })

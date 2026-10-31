@@ -1,117 +1,123 @@
-// user store 单元测试
+// user store 单元测试（Zustand）
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createPinia, setActivePinia } from 'pinia'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/store/user'
+import type { MessageItem } from '@/types'
+
+const resetUser = () => {
+  useUserStore.setState({
+    token: '',
+    roles: [],
+    unreadList: [],
+    unreadCount: 0,
+    isLoggedIn: false
+  })
+}
 
 describe('User Store', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
     localStorage.clear()
     sessionStorage.clear()
+    resetUser()
   })
 
   describe('Initial State', () => {
-    it('should have empty token initially', () => {
-      const store = useUserStore()
-      expect(store.token).toBe('')
+    it('should have empty auth state', () => {
+      const state = useUserStore.getState()
+      expect(state.token).toBe('')
+      expect(state.roles).toEqual([])
+      expect(state.isLoggedIn).toBe(false)
     })
 
-    it('should have empty roles initially', () => {
-      const store = useUserStore()
-      expect(store.roles).toEqual([])
-    })
-
-    it('should not be logged in initially', () => {
-      const store = useUserStore()
-      expect(store.isLoggedIn).toBe(false)
-    })
-
-    it('should have empty unread list initially', () => {
-      const store = useUserStore()
-      expect(store.unreadList).toEqual([])
-    })
-
-    it('should have zero unread count initially', () => {
-      const store = useUserStore()
-      expect(store.unreadCount).toBe(0)
+    it('should have empty unread messages', () => {
+      const state = useUserStore.getState()
+      expect(state.unreadList).toEqual([])
+      expect(state.unreadCount).toBe(0)
     })
   })
 
   describe('Authentication', () => {
-    it('should set auth info correctly', () => {
-      const store = useUserStore()
-      store.setAuth({
-        token: 'test-token-123',
-        roles: ['admin', 'user']
-      })
-
-      expect(store.token).toBe('test-token-123')
-      expect(store.roles).toEqual(['admin', 'user'])
-      expect(store.isLoggedIn).toBe(true)
+    it('should set auth info and persist token/roles', () => {
+      useUserStore.getState().setAuth({ token: 'test-token-123', roles: ['admin', 'user'] })
+      const state = useUserStore.getState()
+      expect(state.token).toBe('test-token-123')
+      expect(state.roles).toEqual(['admin', 'user'])
+      expect(state.isLoggedIn).toBe(true)
       expect(localStorage.getItem('accessToken')).toBe('test-token-123')
+      expect(localStorage.getItem('userRoles')).toBe('["admin","user"]')
     })
 
-    it('should clear auth info correctly', () => {
-      const store = useUserStore()
-      store.setAuth({
-        token: 'test-token',
-        roles: ['admin']
-      })
+    it('should clear auth info and message cache', () => {
+      const store = useUserStore.getState()
+      store.setAuth({ token: 'test-token', roles: ['admin'] })
+      localStorage.setItem('platform_system_messages', '[]')
       store.clearAuth()
 
-      expect(store.token).toBe('')
-      expect(store.roles).toEqual([])
-      expect(store.isLoggedIn).toBe(false)
+      const state = useUserStore.getState()
+      expect(state.token).toBe('')
+      expect(state.roles).toEqual([])
+      expect(state.isLoggedIn).toBe(false)
+      expect(state.unreadList).toEqual([])
       expect(localStorage.getItem('accessToken')).toBeNull()
       expect(localStorage.getItem('userRoles')).toBeNull()
+      expect(localStorage.getItem('platform_system_messages')).toBeNull()
     })
   })
 
   describe('Role Checking', () => {
-    it('should check if user has specific role', () => {
-      const store = useUserStore()
-      store.setAuth({
-        token: 'test-token',
-        roles: ['admin', 'user']
-      })
-
-      expect(store.hasRole('admin')).toBe(true)
-      expect(store.hasRole('finance')).toBe(false)
+    beforeEach(() => {
+      useUserStore.getState().setAuth({ token: 'test-token', roles: ['admin', 'user'] })
     })
 
-    it('should check if user has any of the specified roles', () => {
-      const store = useUserStore()
-      store.setAuth({
-        token: 'test-token',
-        roles: ['user']
-      })
+    it('should check a single role', () => {
+      expect(useUserStore.getState().hasRole('admin')).toBe(true)
+      expect(useUserStore.getState().hasRole('finance')).toBe(false)
+    })
 
-      expect(store.hasAnyRole(['admin', 'user'])).toBe(true)
-      expect(store.hasAnyRole(['admin', 'finance'])).toBe(false)
+    it('should check any of the given roles', () => {
+      expect(useUserStore.getState().hasAnyRole(['admin', 'user'])).toBe(true)
+      expect(useUserStore.getState().hasAnyRole(['admin', 'finance'])).toBe(true)
+      expect(useUserStore.getState().hasAnyRole(['finance', 'guest'])).toBe(false)
     })
   })
 
   describe('Message Sync', () => {
-    it('should sync unread messages from localStorage', () => {
-      const store = useUserStore()
-      const messages = [
-        { id: 1, title: 'Msg 1', time: '2024-01-01', status: '未读' as const },
-        { id: 2, title: 'Msg 2', time: '2024-01-02', status: '已读' as const },
-        { id: 3, title: 'Msg 3', time: '2024-01-03', status: '未读' as const }
-      ]
+    const messages: MessageItem[] = [
+      { id: 1, title: 'Msg 1', time: '2024-01-01', status: '未读' },
+      { id: 2, title: 'Msg 2', time: '2024-01-02', status: '已读' },
+      { id: 3, title: 'Msg 3', time: '2024-01-03', status: '未读' }
+    ]
+
+    it('should sync unread messages from platform_system_messages', () => {
       localStorage.setItem('platform_system_messages', JSON.stringify(messages))
+      useUserStore.getState().syncMessageStatus()
 
-      store.syncMessageStatus()
-
-      expect(store.unreadList).toHaveLength(2)
-      expect(store.unreadCount).toBe(2)
+      const state = useUserStore.getState()
+      expect(state.unreadList).toHaveLength(2)
+      expect(state.unreadCount).toBe(2)
     })
 
-    it('should handle empty messages', () => {
-      const store = useUserStore()
-      store.syncMessageStatus()
+    it('should handle empty message list', () => {
+      useUserStore.getState().syncMessageStatus()
+      expect(useUserStore.getState().unreadList).toEqual([])
+      expect(useUserStore.getState().unreadCount).toBe(0)
+    })
 
-      expect(store.unreadList).toEqual([])
+    it('should mark one message as read and refresh unread count', () => {
+      localStorage.setItem('platform_system_messages', JSON.stringify(messages))
+      useUserStore.getState().markAsRead(1)
+
+      const state = useUserStore.getState()
+      expect(state.unreadCount).toBe(1)
+      expect(state.unreadList.map((m) => m.id)).toEqual([3])
+    })
+
+    it('should mark all messages as read', () => {
+      localStorage.setItem('platform_system_messages', JSON.stringify(messages))
+      useUserStore.getState().markAllAsRead()
+
+      const state = useUserStore.getState()
+      expect(state.unreadCount).toBe(0)
+      expect(state.unreadList).toEqual([])
     })
   })
 })
