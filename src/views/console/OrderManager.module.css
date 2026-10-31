@@ -1,0 +1,204 @@
+.consoleCardContainer {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+/* 我的申请头部样式 */
+.orderActionFilterHeaderBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fafafa;
+  padding: 12px 20px;
+  border-radius: 4px;
+}
+
+.filterFlexInputs {
+  display: flex;
+  gap: 24px;
+}
+
+.selectCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cellLbl {
+  font-size: 14px;
+  color: #4e5969;
+}
+
+.actionTriggerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 图一、图二通用的高级卡片式多条件搜索框样式 */
+.resourceFilterComplexBar {
+  background-color: #fafafa;
+  border: 1px solid #e5e6eb;
+  border-radius: 4px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.complexGridInputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 40px;
+  align-items: center;
+}
+
+.filterItemNode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nodeLbl {
+  font-size: 14px;
+  color: #4e5969;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* 按钮底栏布局规范 */
+.resourceActionTriggerGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed #e5e6eb;
+  padding-top: 14px;
+}
+
+.leftBatchBtns {
+  display: flex;
+  gap: 12px;
+}
+
+.rightQueryBtns {
+  display: flex;
+  gap: 12px;
+}
+
+/* 按钮通用色值重塑 */
+.btnPrimaryBlue {
+  background-color: #1677ff !important;
+  border-color: #1677ff !important;
+}
+
+.btnDangerRed {
+  background-color: #f53f3f !important;
+  border-color: #f53f3f !important;
+  color: #ffffff !important;
+}
+
+/* 表格互动标签 */
+.tableInteractiveBlueLbl {
+  color: #1677ff;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tableInteractiveBlueLbl:hover {
+  text-decoration: underline;
+}
+
+.tableActionTriggerLbl {
+  color: #1677ff;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 12px;
+}
+
+.tableActionTriggerLbl:hover {
+  color: #4096ff;
+}
+
+.tableActionTriggerDangerLbl {
+  color: #f53f3f;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.tableActionTriggerDangerLbl:hover {
+  color: #ff7875;
+}
+
+/* 状态标签 */
+.orangePendingStatusNode {
+  color: #faad14;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+}
+
+.dotBlinkInner {
+  font-size: 10px;
+}
+
+.statusPendingPay {
+  color: #faad14;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+}
+
+.statusPaid {
+  color: #1677ff;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+}
+
+.statusProcessing {
+  color: #722ed1;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+}
+
+.statusCompleted {
+  color: #52c41a;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+}
+
+.statusCancelled {
+  color: #999;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+}
+
+.paginationFooterFlexRow {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+}
+
+/* Element 表头底色 → antd 表头底色 */
+.consoleTableWrapper :global(.ant-table-thead > tr > th) {
+  background: #f7f8fa;
+  color: #1d2129;
+  font-weight: 500;
+}

@@ -1,0 +1,220 @@
+/* 基础页面布局骨架 */
+.consoleResourceDetailPage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 导航返回头部 */
+.detailBackNavigationBar {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  user-select: none;
+}
+.backArrowIcon {
+  font-size: 16px;
+  color: #4E5969;
+  margin-right: 8px;
+}
+.resourceTitleName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1D2129;
+  margin-right: 12px;
+}
+.statusBadgeStopped {
+  background-color: #F2F3F5;
+  color: #4E5969;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.statusBadgeStopped .dot {
+  font-size: 8px;
+  color: #86909C;
+}
+
+/* 1. 顶置浅蓝元数据通栏 */
+.topMetadataInfobar {
+  background-color: #F2F6FC;
+  border-radius: 4px;
+  padding: 14px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+  margin-bottom: 20px;
+}
+.metaItem {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+.metaItem .lbl { color: #86909C; }
+.metaItem .val { color: #1D2129; font-weight: 400; }
+
+/* 2. Tabs 条 */
+.monitorNavigationTabs {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #E5E6EB;
+  margin-bottom: 20px;
+  padding-left: 4px;
+}
+.tabItem {
+  font-size: 14px;
+  color: #4E5969;
+  padding-bottom: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.tabItem:hover, .tabItem.active {
+  color: #1677FF;
+}
+.tabItem.active { font-weight: 500; }
+.tabItem.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1677FF;
+}
+
+/* 3. 监控卡片网格 */
+.monitoringMetricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.metricCardBox {
+  background-color: #ffffff;
+  border: 1px solid #E5E6EB;
+  border-radius: 4px;
+  padding: 20px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.metricCardBox:hover {
+  border-color: #1677FF;
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
+}
+.selectedCard {
+  border-color: #1677FF !important;
+  background-color: #F4F8FF;
+}
+.metricTitle { font-size: 13px; color: #86909C; margin-bottom: 16px; }
+.metricValueRow { display: flex; align-items: baseline; gap: 8px; margin-bottom: 16px; }
+.hugeNum { font-size: 32px; font-weight: 700; color: #1D2129; font-family: Arial; line-height: 1; }
+.subCapacity { font-size: 13px; color: #86909C; }
+/* 原 Vue 模板使用但未定义局部样式，保留结构占位 */
+.metricProgressBarWrapper { width: 100%; }
+
+/* 4. 底部内容切换区 */
+.detailDynamicContentArea {
+  min-height: 350px;
+}
+
+/* 模式 A：基本资源配置表格样式 */
+.bottomResourceProfileCard {
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 24px 20px;
+  border: 1px solid #E5E6EB;
+}
+.profileBlockHeader {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1D2129;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.blueVLine {
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  background-color: #1677FF;
+  border-radius: 2px;
+}
+.profilePropertiesMatrix {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 40px;
+}
+.propItem { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.propItem .pLbl { color: #86909C; font-size: 13px; }
+.propItem .pVal { color: #1D2129; font-weight: 400; min-height: 20px; word-break: break-all; }
+
+/* 模式 B：图二规范的折线图大看板 */
+.monitorGraphsDashboard {
+  background-color: #ffffff;
+  border: 1px solid #E5E6EB;
+  border-radius: 4px;
+  padding: 24px 20px;
+}
+.graphDashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.graphDashboardHeader .leftTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.graphDashboardHeader .titleText {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1D2129;
+}
+.rightTimeFilter { display: flex; align-items: center; }
+.chartsSlotsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+.chartContainerBox {
+  border: 1px solid #F2F3F5;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #FCFDFE;
+}
+.chartInnerTitle {
+  font-size: 13px;
+  color: #4E5969;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.echartsDomPlaceholder {
+  height: 260px;
+  width: 100%;
+  background-color: #F8FAFC;
+  border: 1px dashed #E5E6EB;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.emptyLoadingText {
+  font-size: 13px;
+  color: #AFB9C6;
+  font-style: italic;
+}
+
+.fontCode { font-family: Consolas, Monaco, monospace; }
+
+/* 沿用 Vue 版根节点的禁用翻译标记类 */
+.notranslate { unicode-bidi: normal; }

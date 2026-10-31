@@ -1,0 +1,43 @@
+.consoleDynamicAssetWorkspaceWrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+.assetSearchCard { background: #ffffff; padding: 18px 24px; border-radius: 4px; }
+.paginationWrapper { display: flex; justify-content: flex-end; padding: 16px 0 4px; }
+.searchLayoutRow { display: flex; justify-content: space-between; align-items: center; }
+.searchInputBox { display: flex; align-items: center; gap: 12px; }
+.searchInputBox .lbl { font-size: 14px; color: #4E5969; }
+.searchButtonsBox { display: flex; gap: 12px; }
+.btnPrimaryBlue { background-color: #1677FF !important; border-color: #1677FF !important; }
+
+.assetTableCard { background: #ffffff; padding: 20px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.01); }
+.assetTableCard :global(.ant-table-thead > tr > th) {
+  background: #F7F8FA;
+  color: #1D2129;
+  font-weight: 500;
+  height: 44px;
+}
+.interactiveBlueLbl { color: #1677FF; cursor: pointer; font-weight: 500; }
+.interactiveBlueLbl:hover { text-decoration: underline; }
+.purpleNamespacePillBadge { background-color: #F5EEFF; color: #722ED1; border: 1px solid #D3ADF7; padding: 2px 6px; border-radius: 2px; font-size: 12px; }
+
+/* 操作面板样式还原（图四至图七） */
+.tableOpLinksFlexBox { display: flex; align-items: center; gap: 14px; }
+.opBtnActionLink { color: #1677FF; cursor: pointer; font-size: 14px; user-select: none; }
+.opBtnActionLink:hover { color: #4096ff; }
+
+/* 启动中/重启中的黄色高亮标识颜色（严格对齐图六/图七） */
+.warningAmberLbl { color: #FAAD14 !important; }
+.warningAmberLbl:hover { color: #ffc04d !important; }
+
+.moreActionTriggerDotsIcon { color: #86909C; cursor: pointer; display: flex; align-items: center; outline: none; }
+.moreActionTriggerDotsIcon:hover { color: #1677FF; }
+
+.dangerDropdownItem:global(.ant-dropdown-menu-item) { color: #F53F3F !important; }
+.dangerDropdownItem:global(.ant-dropdown-menu-item):hover { background-color: #FFECE8 !important; }
+
+.destroyAlertBodyContent { display: flex; gap: 16px; padding: 12px 4px 4px 4px; }
+.warningLargeIcon { font-size: 36px; color: #F53F3F; flex-shrink: 0; }
+.alertTexts h4 { margin: 0 0 8px 0; font-size: 15px; color: #1D2129; font-weight: bold; }
+.alertTexts p { margin: 0; font-size: 13px; color: #86909C; line-height: 1.6; }
+.dialogCustomActionsFooter { display: flex; justify-content: flex-end; gap: 12px; }
+
+/* 沿用 Vue 版根节点的禁用翻译标记类 */
+.notranslate { unicode-bidi: normal; }

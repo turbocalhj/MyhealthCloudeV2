@@ -1,0 +1,23 @@
+.consoleCardContainer { background: #ffffff; padding: 24px; border-radius: 4px; }
+.filterTabsRowBox { display: flex; align-items: center; gap: 16px; margin-bottom: 4px; }
+.filterCaptionLbl { font-size: 14px; color: #4E5969; }
+.contractAdvancedSearchBar { display: flex; justify-content: space-between; align-items: center; background-color: #FAFAFA; padding: 14px 20px; border-radius: 4px; margin-top: 16px; }
+.searchFieldsFlex { display: flex; gap: 24px; }
+.fieldCell { display: flex; align-items: center; gap: 10px; }
+.cellLabel { font-size: 14px; color: #4E5969; }
+.btnPrimaryBlue { background-color: #1677FF !important; border-color: #1677FF !important; }
+/* 原 Vue 模板使用但未定义局部样式，保留按钮组间距 */
+.searchActions { display: flex; gap: 12px; }
+.consoleTableWrapper :global(.ant-table-thead > tr > th) {
+  background: #F7F8FA;
+  color: #1D2129;
+  font-weight: 500;
+  height: 44px;
+}
+.tableBlueLinkLbl { color: #1677FF; cursor: pointer; font-weight: 500; }
+.tableBlueLinkLbl:hover { text-decoration: underline; }
+.blueContractStatusPill { background-color: #E8F3FF; color: #1677FF; padding: 2px 10px; border-radius: 2px; font-size: 12px; }
+.actionBlueLinkBtn { color: #1677FF; cursor: pointer; font-size: 14px; }
+
+/* 沿用 Vue 版根节点的禁用翻译标记类 */
+.notranslate { unicode-bidi: normal; }

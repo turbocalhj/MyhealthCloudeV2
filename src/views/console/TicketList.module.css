@@ -1,0 +1,294 @@
+.consoleTicketManagementWorkspace {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   工单统计面板
+   ========================================================================== */
+.ticketStatsOverviewPanel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.statCardItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+  transition: all 0.3s ease;
+}
+
+.statCardItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 21, 41, 0.08);
+}
+
+.statIconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.bgBlue { background: linear-gradient(135deg, #1677FF 0%, #4096FF 100%); }
+.bgOrange { background: linear-gradient(135deg, #FA8C16 0%, #FFC069 100%); }
+.bgGreen { background: linear-gradient(135deg, #52C41A 0%, #95DE64 100%); }
+.bgRed { background: linear-gradient(135deg, #F5222D 0%, #FF7875 100%); }
+
+.statContentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabelText { font-size: 13px; color: #86909C; }
+.statValueNumber { font-size: 24px; font-weight: 700; color: #1D2129; line-height: 1; }
+.statTrendText { font-size: 12px; color: #52C41A; }
+.statTrendText.warningText { color: #FA8C16; }
+
+/* ==========================================================================
+   工单模板快捷面板
+   ========================================================================== */
+.ticketTemplateQuickPanel {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.templatePanelHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.panelTitleText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+.templateCardsList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.templateItemCard {
+  border: 1px solid #E5E6EB;
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #FAFBFC;
+}
+
+.templateItemCard:hover {
+  border-color: #1677FF;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.templateItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.templateItemHeader :global(.ant-tag) {
+  margin-inline-end: 0;
+}
+
+.templateItemName { font-size: 14px; font-weight: 600; color: #1D2129; }
+.templateItemDesc { font-size: 12px; color: #86909C; line-height: 1.5; margin: 0; }
+
+/* ==========================================================================
+   筛选表单
+   ========================================================================== */
+.filterSearchPanelCard {
+  background-color: #ffffff;
+  padding: 20px 24px 4px 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.filterInlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+}
+
+.filterInlineForm :global(.ant-form-item) {
+  margin-right: 28px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.filterInlineForm :global(.ant-form-item .ant-form-item-label > label) {
+  font-size: 14px;
+  color: #4E5969;
+  font-weight: 400;
+  padding-right: 12px;
+  height: auto;
+}
+
+.filterInlineForm :global(.ant-form-item .ant-form-item-control) {
+  flex: initial;
+}
+
+.standardFormWidth { width: 200px; }
+.standardFormWidthDate { width: 260px; }
+
+.filterActionsFormItem { margin-left: auto; margin-right: 0; }
+
+.filterActionsFormItem :global(.ant-form-item-control-input-content) {
+  display: flex;
+  gap: 8px;
+}
+
+.actionSearchPrimaryBtn {
+  background-color: #1677FF;
+  border-color: #1677FF;
+}
+
+.actionResetPlainBtn {
+  background-color: #ffffff;
+  border: 1px solid #E5E6EB;
+  color: #1D2129;
+}
+
+.actionExportPlainBtn {
+  background-color: #ffffff;
+  border-color: #52C41A;
+  color: #52C41A;
+}
+
+/* ==========================================================================
+   数据表格
+   ========================================================================== */
+.dataTableContainerCard {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.tableTopBarActions {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tableCreateTicketActionBtn {
+  background-color: #1677FF;
+  border-color: #1677FF;
+  font-size: 14px;
+  padding: 8px 16px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.plusIconMargin { margin-right: 4px; }
+
+.customCleanDataTable { font-size: 14px; color: #1D2129; }
+
+.customCleanDataTable :global(.ant-table-thead > tr > th) {
+  background: #F7F8FA;
+  color: #1D2129;
+  font-weight: 500;
+  height: 44px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.customCleanDataTable :global(.ant-table-tbody > tr > td) {
+  height: 48px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.interactiveBlueLinkLbl {
+  color: #1677FF;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+}
+
+.interactiveBlueLinkLbl:hover { text-decoration: underline; }
+
+/* 状态标签外圈实线色块架构 */
+.statusTagPillNode {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.statusDotInner { font-size: 8px; }
+.statusTransferWait { background-color: #F5EEFF; color: #722ED1; border: 1px solid #D3ADF7; }
+.statusWithdrawn { background-color: #FFF0F6; color: #EB2F96; border: 1px solid #FFADD2; }
+.statusClosed { background-color: #F5F5F5; color: #595959; border: 1px solid #D9D9D9; }
+.statusProcessing { background-color: #FFFBE6; color: #D46B08; border: 1px solid #FFE7BA; }
+.statusClientFeedback { background-color: #FFF7E6; color: #D46B08; border: 1px solid #FFD591; }
+.statusPending { background-color: #E6F7FF; color: #1D5BFF; border: 1px solid #91D5FF; }
+
+/* 优先级标签 */
+.priorityTagPillNode {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.priorityWarnIcon { font-size: 12px; }
+.priorityHighTag { background-color: #FFF1F0; color: #F5222D; border: 1px solid #FFA39E; }
+.priorityMediumTag { background-color: #FFFBE6; color: #D46B08; border: 1px solid #FFE7BA; }
+.priorityLowTag { background-color: #F6FFED; color: #52C41A; border: 1px solid #B7EB8F; }
+
+/* 操作动作按钮流 */
+.tableActionsInlineFlex { display: flex; align-items: center; gap: 14px; }
+.actionLinkBtn { color: #1677FF; cursor: pointer; font-size: 14px; user-select: none; }
+.actionLinkBtn:hover { color: #4096ff; }
+.warningLbl { color: #E6A23C; }
+.dangerLbl { color: #F53F3F; }
+.infoLbl { color: #86909C; }
+.finishedDisabledLbl { color: #C9CDD4; cursor: not-allowed; font-size: 14px; }
+.tablePaginationFooterRow { display: flex; justify-content: flex-end; padding-top: 18px; }
+
+/* 响应式 */
+@media (max-width: 1200px) {
+  .ticketStatsOverviewPanel { grid-template-columns: repeat(2, 1fr); }
+  .templateCardsList { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .ticketStatsOverviewPanel { grid-template-columns: 1fr; }
+  .templateCardsList { grid-template-columns: 1fr; }
+}

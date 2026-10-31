@@ -1,0 +1,159 @@
+/* ==========================================================================
+   页面底层画布基础板式
+   ========================================================================== */
+.consoleTicketCreateContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.formMainCardWrapper {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 24px 32px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.formBackNavigationBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1D2129;
+  cursor: pointer;
+  margin-bottom: 16px;
+  width: max-content;
+  user-select: none;
+}
+
+.formBackNavigationBar:hover { color: #1677FF; }
+.backArrowIcon { font-size: 16px; }
+
+/* 模板反填提示横幅 */
+.templateFillHintBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #E6F7FF;
+  border: 1px solid #91D5FF;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #1D5BFF;
+}
+
+.hintIcon { font-size: 16px; }
+.hintText { flex: 1; }
+.templateFillHintBanner strong { color: #1677FF; font-weight: 600; }
+
+.standardVerticalFormBody {
+  max-width: 760px;
+  margin-left: 0;
+}
+
+.standardVerticalFormBody :global(.ant-form-item .ant-form-item-label > label) {
+  font-weight: 500;
+  color: #1D2129;
+  padding-bottom: 8px;
+  font-size: 14px;
+}
+
+.customFormInputNode { width: 100%; }
+
+/* 优先级单选按钮 */
+.priorityRadioGroupRow { display: flex; gap: 12px; }
+
+.priorityRadioGroupRow :global(.ant-radio-button-wrapper) {
+  padding: 8px 20px;
+  border: 1px solid #D9D9D9;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.priorityRadioGroupRow :global(.ant-radio-button-wrapper::before) {
+  display: none;
+}
+
+.priorityHighRadio :global(.ant-radio-button-wrapper) { color: #F5222D; }
+.priorityMediumRadio :global(.ant-radio-button-wrapper) { color: #D46B08; }
+.priorityLowRadio :global(.ant-radio-button-wrapper) { color: #52C41A; }
+
+.uploaderFormItemBox { margin-bottom: 24px; }
+.ticketDragUploaderComponent { width: 100%; }
+
+.ticketDragUploaderComponent :global(.ant-upload-drag) {
+  background-color: #FAFAFA;
+  border: 1px dashed #E5E6EB;
+  border-radius: 4px;
+  padding: 32px 16px;
+  transition: border-color 0.2s ease;
+}
+
+.ticketDragUploaderComponent :global(.ant-upload-drag:hover) { border-color: #1677FF; }
+
+.uploadIconWrap { margin: 0 0 12px 0; }
+.uploadIcon { font-size: 40px; color: #C9CDD4; }
+
+.uploadText { font-size: 14px; color: #4E5969; margin: 0; }
+.uploadTipHintLbl { font-size: 13px; color: #86909C; margin-top: 8px; line-height: 1.4; }
+
+.formSubmitActionsRow {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.formPrimarySubmitBtn {
+  background-color: #1677FF;
+  border-color: #1677FF;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 24px;
+  height: 38px;
+  border-radius: 4px;
+}
+
+.formPrimarySubmitBtn:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+
+.formPlainCancelBtn {
+  background-color: #ffffff;
+  border: 1px solid #E5E6EB;
+  color: #1D2129;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 24px;
+  height: 38px;
+  border-radius: 4px;
+}
+
+.formPlainCancelBtn:hover {
+  background-color: #F2F3F5;
+  border-color: #C9CDD4;
+}
+
+.formSaveDraftBtn {
+  background-color: #ffffff;
+  border: 1px solid #1677FF;
+  color: #1677FF;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 24px;
+  height: 38px;
+  border-radius: 4px;
+}
+
+.formSaveDraftBtn:hover {
+  background-color: #ffffff;
+  border-color: #4096ff;
+  color: #4096ff;
+}

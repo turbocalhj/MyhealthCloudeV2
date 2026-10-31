@@ -1,0 +1,26 @@
+.searchFilterCardBox { background-color: #ffffff; padding: 18px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); margin-bottom: 16px; }
+.filterLayoutInlineRow { display: flex; justify-content: space-between; align-items: center; }
+.filterInputCell { display: flex; align-items: center; gap: 12px; }
+.filterFieldLbl { font-size: 14px; color: #4E5969; }
+.filterActionBtnsGroup { display: flex; gap: 12px; }
+.actionSearchPrimaryBlueBtn { background-color: #1677FF !important; border-color: #1677FF !important; }
+/* 原 Vue 模板使用但未定义局部样式，保留占位并保持 antd 默认外观 */
+.actionResetPlainBtn { background-color: #FFFFFF; border-color: #D9D9D9; }
+.dataTableContainerCard { background-color: #ffffff; padding: 20px 24px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03); }
+.dataTableContainerCard :global(.ant-table-thead > tr > th) {
+  background: #F7F8FA;
+  color: #1D2129;
+  font-weight: 500;
+  height: 44px;
+}
+.interactiveBlueLinkLbl { color: #1677FF; cursor: pointer; }
+.interactiveBlueLinkLbl:hover { text-decoration: underline; }
+.pinkContractStatusTagNo { background-color: #FFF0F6; color: #EB2F96; border: 1px solid #FFADD2; padding: 1px 8px; border-radius: 2px; font-size: 12px; }
+.tableInlineActionsFlex { display: flex; align-items: center; gap: 12px; }
+.actionBlueLink { color: #1677FF; cursor: pointer; font-size: 14px; }
+.moreActionTriggerDots { color: #86909C; cursor: pointer; display: flex; align-items: center; outline: none; }
+.tablePaginationFooterRow { display: flex; justify-content: flex-end; padding-top: 20px; }
+.iconMarginRight { margin-right: 4px; }
+
+/* 沿用 Vue 版根节点的禁用翻译标记类 */
+.notranslate { unicode-bidi: normal; }

@@ -1,0 +1,255 @@
+.consoleMyEquityWorkspacePage {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   第一部分：流程卡片样式区
+   ========================================================================== */
+.trialProcessInstructionCard {
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.instructionHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.lightbulbIconBox {
+  width: 36px;
+  height: 36px;
+  background-color: #E8F3FF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bulbIcon {
+  font-size: 18px;
+  color: #1677FF;
+}
+
+.instructionMainTitle {
+  font-size: 15px;
+  font-weight: bold;
+  color: #1D2129;
+  margin: 0 0 4px 0;
+}
+
+.instructionSubDesc {
+  font-size: 13px;
+  color: #86909C;
+  margin: 0;
+}
+
+/* 横向多步连线排版 */
+.processStepsTimelineRow {
+  display: flex;
+  align-items: center;
+  max-width: 800px;
+  margin-bottom: 32px;
+}
+
+.stepNodeItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stepNumberCircle {
+  width: 22px;
+  height: 22px;
+  background-color: #1677FF;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.stepNodeName {
+  font-size: 14px;
+  color: #1D2129;
+  font-weight: 500;
+}
+
+.stepConnectingLine {
+  flex: 1;
+  height: 1px;
+  background-color: #E5E6EB;
+  margin: 0 16px;
+}
+
+.instructionActionsRow {
+  display: flex;
+  align-items: center;
+}
+
+.instructionActionsRow :global(.ant-btn) {
+  margin-inline-start: 0;
+}
+
+.instructionActionsRow :global(.ant-btn + .ant-btn) {
+  margin-inline-start: 12px;
+}
+
+.btnApplyNewTrial {
+  background-color: #1677FF !important;
+  border-color: #1677FF !important;
+  height: 34px;
+}
+
+.btnCheckPolicyPlain {
+  height: 34px;
+  border-color: #E5E6EB !important;
+  color: #4E5969 !important;
+}
+
+/* ==========================================================================
+   第二部分：试用申请卡片列表区
+   ========================================================================== */
+.myTrialApplicationsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionBlockTitle {
+  font-size: 15px;
+  font-weight: bold;
+  color: #1D2129;
+  margin: 4px 0;
+}
+
+.trialCardsVerticalList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 核心卡片骨架 */
+.trialAssetSpecCard {
+  background-color: #ffffff;
+  border: 1px solid #E5E6EB;
+  border-radius: 4px;
+  padding: 20px 24px;
+  box-sizing: border-box;
+}
+
+.cardTopHeadlineMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.assetDisplayName {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1D2129;
+  margin: 0;
+}
+
+/* 状态 Badge 标签色块组 */
+.statusPillBadge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.expiredTag { background-color: #F2F3F5; color: #86909C; }
+.pendingTag { background-color: #FFF7E6; color: #FAAD14; }
+.rejectedTag { background-color: #FFECE8; color: #F53F3F; }
+.approvedTag { background-color: #E8FFEA; color: #00B42A; }
+
+/* 硬件配置规格灰白对齐框 */
+.cardHardwareSpecGrid {
+  background-color: #FAFAFA;
+  padding: 12px 18px;
+  border-radius: 4px;
+  display: flex;
+  gap: 48px;
+  margin-bottom: 16px;
+}
+
+.specGridItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.specGridItem .lbl {
+  color: #86909C;
+  background-color: #F2F3F5;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.specGridItem .val {
+  color: #1D2129;
+}
+
+.fontSemibold {
+  font-weight: 500;
+}
+
+/* 时间戳容器排版 */
+.cardTimestampsDoubleRow {
+  display: flex;
+  gap: 40px;
+  font-size: 13px;
+  color: #86909C;
+  margin-bottom: 18px;
+  padding-left: 4px;
+}
+
+.cardTimestampsDoubleRow .val {
+  color: #4E5969;
+  margin-left: 8px;
+}
+
+.orangeHighlightText {
+  color: #FF7D00 !important;
+  font-weight: 500;
+}
+
+/* 进度条轨道控制 */
+.progressContainerBar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.statusTextHintLine {
+  font-size: 12px;
+  color: #86909C;
+}
+
+.customProgress :global(.ant-progress) {
+  margin: 0;
+  line-height: 1;
+}
+
+.customProgress :global(.ant-progress-bg) {
+  border-radius: 4px !important;
+}
+
+.customProgress :global(.ant-progress-inner) {
+  background-color: #F2F3F5 !important;
+  border-radius: 4px !important;
+}

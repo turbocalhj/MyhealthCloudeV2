@@ -1,0 +1,243 @@
+.accountSettingsPage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settingsCard {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.04);
+}
+
+.settingsHeader {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.settingsTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222222;
+  margin: 0 0 8px 0;
+}
+
+.settingsDesc {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+}
+
+/* 个人信息布局 */
+.profileContent {
+  display: flex;
+  gap: 40px;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatarWrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid #e5e6eb;
+  transition: border-color 0.3s;
+}
+
+.avatarWrapper:hover {
+  border-color: #1677FF;
+}
+
+.avatarWrapper:hover .avatarOverlay {
+  opacity: 1;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  color: #999;
+}
+
+.avatarOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  color: #fff;
+  font-size: 12px;
+}
+
+.avatarTip {
+  font-size: 12px;
+  color: #86909C;
+  margin: 0;
+}
+
+.profileForm {
+  flex: 1;
+  max-width: 500px;
+}
+
+.profileForm :global(.ant-form-item) {
+  margin-bottom: 18px;
+}
+
+.profileForm :global(.ant-btn + .ant-btn) {
+  margin-inline-start: 12px;
+}
+
+.resetButton {
+  margin-inline-start: 0;
+}
+
+/* 安全设置列表 */
+.securityList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.securityItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #FAFAFA;
+  border-radius: 4px;
+}
+
+.securityInfo {
+  flex: 1;
+}
+
+.securityLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1D2129;
+  margin-bottom: 4px;
+}
+
+.securityDesc {
+  font-size: 13px;
+  color: #86909C;
+}
+
+/* Element Plus plain primary 按钮还原 */
+.btnPlainPrimary {
+  background: #ecf5ff !important;
+  border-color: #a0cfff !important;
+  color: #409eff !important;
+}
+
+.btnPlainPrimary:hover {
+  background: #1677FF !important;
+  border-color: #1677FF !important;
+  color: #ffffff !important;
+}
+
+/* 通知设置列表 */
+.notificationList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notificationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #FAFAFA;
+  border-radius: 4px;
+}
+
+.notificationInfo {
+  flex: 1;
+}
+
+.notificationLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1D2129;
+  margin-bottom: 4px;
+}
+
+.notificationDesc {
+  font-size: 13px;
+  color: #86909C;
+}
+
+/* 头像上传 */
+.avatarUploadArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarUploader :global(.ant-upload-select) {
+  width: 178px;
+  height: 178px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+  background: transparent;
+}
+
+.avatarUploader :global(.ant-upload-select:hover) {
+  border-color: #1677FF;
+}
+
+.avatarPreview {
+  width: 178px;
+  height: 178px;
+  display: block;
+  object-fit: cover;
+}
+
+.avatarUploaderIcon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadTip {
+  font-size: 12px;
+  color: #86909C;
+  margin: 0;
+}

@@ -1,0 +1,177 @@
+.orderCreatePage {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.pageHeader {
+  margin-bottom: 24px;
+}
+
+.pageHeader h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #222;
+  margin: 0 0 8px 0;
+}
+
+.pageHeader p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.emptyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 0;
+  gap: 20px;
+}
+
+.orderContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.orderCard {
+  border-radius: 8px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.itemCount {
+  font-size: 14px;
+  color: #909399;
+  font-weight: normal;
+}
+
+.orderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.itemSpecs {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.itemMeta {
+  display: flex;
+  gap: 8px;
+}
+
+.metaTag {
+  background: #e6f7ff;
+  color: #1677ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.metaSource {
+  background: #f5f5f5;
+  color: #666;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.itemRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.itemQuantity {
+  font-size: 14px;
+  color: #909399;
+}
+
+.itemPrice {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ff4d4f;
+}
+
+.orderForm {
+  max-width: 500px;
+}
+
+.couponBox {
+  display: flex;
+  gap: 12px;
+}
+
+.couponInfo {
+  font-size: 13px;
+  color: #52c41a;
+  margin-top: 4px;
+}
+
+.orderSummaryCard {
+  border-radius: 8px;
+}
+
+.orderSummaryCard :global(.ant-card-body) {
+  padding: 20px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.summaryRow.discount {
+  color: #52c41a;
+}
+
+.summaryRow.total {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+.totalPrice {
+  font-size: 24px;
+  color: #ff4d4f;
+  font-weight: 700;
+}
+
+.summaryActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}

@@ -1,0 +1,673 @@
+.consoleMessageCenterDashboardLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ==================== 消息统计面板 ==================== */
+.messageStatsPanel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+  transition: all 0.3s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 21, 41, 0.08);
+}
+
+.statIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.bgBlue { background: linear-gradient(135deg, #1677ff 0%, #4096ff 100%); }
+.bgOrange { background: linear-gradient(135deg, #fa8c16 0%, #ffc069 100%); }
+.bgGreen { background: linear-gradient(135deg, #52c41a 0%, #95de64 100%); }
+.bgRed { background: linear-gradient(135deg, #f5222d 0%, #ff7875 100%); }
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: #86909c;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1d2129;
+  line-height: 1;
+}
+
+.statTrend {
+  font-size: 12px;
+  color: #52c41a;
+}
+
+.statTrendWarning {
+  color: #fa8c16;
+}
+
+/* ==================== 消息分类统计图表面板 ==================== */
+.categoryStatsChartPanel {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.chartHeaderTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.titleText {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.chartBarsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chartBarItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.barLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.barCategoryName {
+  font-size: 14px;
+  color: #4e5969;
+  font-weight: 500;
+}
+
+.barCountValue {
+  font-size: 13px;
+  color: #86909c;
+}
+
+.barTrackBg {
+  width: 100%;
+  height: 8px;
+  background-color: #f2f3f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barFillProgress {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.barColorCategoryContract { background-color: #1677ff; }
+.barColorCategoryExpire { background-color: #fa8c16; }
+.barColorCategorySystem { background-color: #722ed1; }
+.barColorCategoryOrder { background-color: #52c41a; }
+.barColorCategorySecurity { background-color: #f5222d; }
+.barColorCategoryMonitor { background-color: #13c2c2; }
+.barColorCategoryDefault { background-color: #86909c; }
+
+.barPercentLabel {
+  font-size: 12px;
+  color: #86909c;
+  text-align: right;
+}
+
+/* ==================== 消息模板快捷面板 ==================== */
+.messageTemplateQuickPanel {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.templatePanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.panelTitleText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.templateGridList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.templateCardItem {
+  border: 1px solid #e5e6eb;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  background-color: #fafbfc;
+}
+
+.templateCardItem:hover {
+  border-color: #1677ff;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.templateCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.templateCardHeader :global(.ant-tag) {
+  margin-inline-end: 0;
+}
+
+.templateNameText {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.templatePreviewText {
+  font-size: 13px;
+  color: #86909c;
+  line-height: 1.5;
+  margin: 8px 0 12px 0;
+  min-height: 40px;
+}
+
+.templateCardActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  border-top: 1px solid #f2f3f5;
+  padding-top: 12px;
+}
+
+.templateCardActions :global(.ant-btn) {
+  margin-inline-start: 0;
+}
+
+.templateEmptyState {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #86909c;
+}
+
+.templateEmptyState p {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.templateFormLayout {
+  padding: 8px 0;
+}
+
+/* ==================== 筛选区 ==================== */
+.messageFilterCardBox {
+  background-color: #ffffff;
+  padding: 20px 24px 12px 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.filterLayoutFieldsInlineRow {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.fieldItemCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 32px;
+}
+
+.lblCaption {
+  font-size: 14px;
+  color: #4e5969;
+  white-space: nowrap;
+}
+
+.actionsFlexButtonsGroup {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.actionsFlexButtonsGroup :global(.ant-btn) {
+  margin-inline-start: 0;
+}
+
+.btnBlueSearchAction.btnBlueSearchAction {
+  background-color: #1677ff;
+  border-color: #1677ff;
+}
+
+.btnBlueSearchAction.btnBlueSearchAction:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+
+.batchManipulationTriggerRow {
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid #f2f3f5;
+  padding-top: 12px;
+  padding-bottom: 4px;
+}
+
+.batchManipulationTriggerRow :global(.ant-btn) {
+  margin-inline-start: 0;
+}
+
+.btnPlainBatchRead.btnPlainBatchRead {
+  border-color: #e5e6eb !important;
+  color: #4e5969 !important;
+  background-color: #ffffff !important;
+}
+
+.btnPlainBatchRead.btnPlainBatchRead:hover:not(:disabled) {
+  border-color: #1677ff !important;
+  color: #1677ff !important;
+}
+
+.btnOutlineAllRead.btnOutlineAllRead {
+  color: #1677ff !important;
+  border-color: #1677ff !important;
+  background-color: #e8f3ff !important;
+}
+
+.btnExportAction.btnExportAction {
+  border-color: #52c41a !important;
+  color: #52c41a !important;
+  background-color: #f6ffed !important;
+}
+
+.btnExportAction.btnExportAction:hover {
+  border-color: #73d13d !important;
+  color: #73d13d !important;
+  background-color: #f6ffed !important;
+}
+
+/* 关键字搜索栏 */
+.keywordSearchRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background-color: #f7f8fa;
+  border-radius: 4px;
+}
+
+.keywordSearchInput {
+  flex: 1;
+}
+
+.searchResultCount {
+  font-size: 13px;
+  color: #1677ff;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ==================== 消息表格 ==================== */
+.messageTableCanvasCard {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.messageTableCanvasCard :global(.ant-table-thead > tr > th) {
+  background: #f7f8fa;
+  color: #1d2129;
+  font-weight: 500;
+  height: 42px;
+  padding: 11px 16px;
+}
+
+.messageTableCanvasCard :global(.ant-table-thead > tr > th.ant-table-cell-scrollbar) {
+  background: #f7f8fa;
+}
+
+.messageTableCanvasCard :global(.ant-table-tbody > tr > td) {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #1d2129;
+}
+
+.titleTextNode {
+  font-size: 14px;
+  color: #4e5969;
+}
+
+.isUnreadBold {
+  font-weight: 500;
+  color: #1d2129 !important;
+}
+
+.priorityIcon {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.priorityIcon.highPriority,
+.highPriority {
+  color: #f5222d;
+}
+
+.statusBadgeLblLink {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.colorInteractiveBlue {
+  color: #1677ff;
+}
+
+.colorNeutralRead {
+  color: #86909c;
+  cursor: default;
+}
+
+.bubbleIconPrefix {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.actionCheckDetailBtn {
+  color: #1677ff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.actionCheckDetailBtn:hover {
+  color: #4096ff;
+}
+
+.tablePaginationFooterRow {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+}
+
+.iconMargin {
+  margin-right: 4px;
+}
+
+/* 状态切换高亮动画 */
+@keyframes statusChangeFlash {
+  0% { background-color: rgba(22, 119, 255, 0.1); }
+  50% { background-color: rgba(22, 119, 255, 0.05); }
+  100% { background-color: transparent; }
+}
+
+.tableFlashAnimation {
+  animation: statusChangeFlash 0.6s ease-out;
+}
+
+/* ==================== 详情弹窗矩阵格子 ==================== */
+.messageMatrixGridFrame {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e6eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gridRowItem {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e6eb;
+  min-height: 48px;
+}
+
+.gridRowItem:last-child {
+  border-bottom: none;
+}
+
+.gridCellLabel {
+  width: 110px;
+  background-color: #f7f8fa;
+  color: #4e5969;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #e5e6eb;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.gridCellValue {
+  flex: 1;
+  padding-left: 20px;
+  padding-right: 20px;
+  color: #1d2129;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.boldTitleText {
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.splitTwoCols {
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+}
+
+.halfCol {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.borderLeftDivider {
+  border-left: 1px solid #e5e6eb;
+}
+
+.alignStretchMode {
+  align-items: stretch;
+}
+
+.contentLabelFix {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 16px;
+}
+
+.textParagraphContent {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.fontMonoStyle {
+  font-family: Consolas, Monaco, monospace;
+  color: #4e5969;
+}
+
+.dialogCustomFooterActions {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 4px;
+}
+
+.btnDialogCloseAction.btnDialogCloseAction {
+  background-color: #1677ff !important;
+  border-color: #1677ff !important;
+  padding: 8px 20px !important;
+  font-size: 14px !important;
+  border-radius: 4px !important;
+}
+
+/* ==================== 分类标签 ==================== */
+.categoryTagNode {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.categoryBadgeTag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.categoryContract {
+  background-color: #e8f3ff;
+  color: #1677ff;
+}
+
+.categoryExpire {
+  background-color: #fff7e8;
+  color: #fa8c16;
+}
+
+.categorySystem {
+  background-color: #f3e8ff;
+  color: #722ed1;
+}
+
+.categoryOrder {
+  background-color: #e8ffe8;
+  color: #52c41a;
+}
+
+.categorySecurity {
+  background-color: #ffe8e8;
+  color: #f5222d;
+}
+
+.categoryMonitor {
+  background-color: #e8ffff;
+  color: #13c2c2;
+}
+
+.categoryDefault {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+/* ==================== 导出弹窗 ==================== */
+.exportDialogContent {
+  padding: 8px 0;
+}
+
+.exportDesc {
+  font-size: 14px;
+  color: #4e5969;
+  margin-bottom: 16px;
+}
+
+.exportFormatOptions {
+  margin-bottom: 16px;
+}
+
+.exportPreview {
+  font-size: 13px;
+  color: #86909c;
+  padding: 8px 12px;
+  background-color: #f7f8fa;
+  border-radius: 4px;
+}
+
+/* ==================== 响应式适配 ==================== */
+@media (max-width: 1200px) {
+  .messageStatsPanel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .templateGridList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .messageStatsPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .templateGridList {
+    grid-template-columns: 1fr;
+  }
+
+  .filterLayoutFieldsInlineRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fieldItemCell {
+    margin-right: 0;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+
+  .actionsFlexButtonsGroup {
+    margin-left: 0;
+    width: 100%;
+  }
+}

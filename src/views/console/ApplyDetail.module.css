@@ -1,0 +1,154 @@
+.applyDetailContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.detailNavigationHeader { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+
+.backArrowBtn {
+  font-size: 16px;
+  color: #4E5969;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.backArrowBtn:hover { color: #1677FF; }
+
+.applyIdText { font-size: 16px; font-weight: 600; color: #1D2129; }
+
+.statusBadgePending {
+  background-color: #FFF7E6;
+  color: #FAAD14;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* 基础元数据信息面板面板排版 */
+.metadataSummaryInfobar {
+  background-color: #E8F3FF;
+  border-radius: 4px;
+  padding: 14px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+  border: 1px solid #BAE7FF;
+}
+
+.metaCell { font-size: 13px; display: flex; align-items: center; }
+.metaCell .lbl { color: #4E5969; }
+.metaCell .val { color: #1D2129; font-weight: 400; }
+.priceBlue { color: #1677FF; font-weight: 500; }
+
+/* 选项卡条 */
+.detailTabsNavigationStrip {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #E5E6EB;
+  margin-top: 24px;
+  padding-left: 4px;
+}
+
+.stripItem {
+  font-size: 14px;
+  color: #4E5969;
+  padding-bottom: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.stripItem:hover,
+.stripItem.active { color: #1677FF; }
+
+.stripItem.active { font-weight: 500; }
+
+.stripItem.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1677FF;
+}
+
+.tabContentBlockCanvas { margin-top: 20px; }
+
+/* 产品规格大卡片 */
+.productSpecProfileCard {
+  background-color: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #E5E6EB;
+  display: flex;
+  flex-direction: column;
+}
+
+.productMainHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  border-bottom: 1px solid #F2F3F5;
+  background-color: #FAFAFA;
+}
+
+.productMainTitle { font-size: 15px; font-weight: bold; color: #1D2129; margin: 0 0 6px 0; }
+.productSubLeaseLbl { font-size: 12px; color: #86909C; }
+.productPriceSummaryBox { text-align: right; }
+
+.discountPrice {
+  font-size: 13px;
+  color: #86909C;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.discountPrice .valNum { font-size: 22px; font-weight: 700; color: #FF7D00; }
+.originalPrice { font-size: 12px; color: #86909C; text-decoration: line-through; margin-top: 4px; }
+
+/* 硬件配置12宫格核心面板 */
+.hardwarePropertiesMatrixGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 32px;
+  padding: 24px;
+}
+
+.propCell { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.propCell .pLbl { color: #86909C; }
+.propCell .pVal { color: #1D2129; font-weight: 400; word-break: break-all; }
+
+/* 合计条 */
+.totalAggregateAmountBar {
+  background-color: #F7F8FA;
+  border-top: 1px solid #E5E6EB;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.totalLbl { font-size: 14px; font-weight: bold; color: #1D2129; }
+.totalVal { font-size: 18px; font-weight: 700; color: #1677FF; }
+
+.emptyPlaceholderBlock {
+  background: #ffffff;
+  padding: 60px;
+  border-radius: 4px;
+  border: 1px solid #E5E6EB;
+}
+
+.fontMono { font-family: Consolas, Monaco, monospace; }
+
+@media (max-width: 1200px) {
+  .hardwarePropertiesMatrixGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .hardwarePropertiesMatrixGrid { grid-template-columns: 1fr; }
+  .productMainHeaderRow { flex-direction: column; gap: 12px; }
+}

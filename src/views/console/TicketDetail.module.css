@@ -1,0 +1,108 @@
+.ticketDetailPageContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.detailBackNavigationBar {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  user-select: none;
+  width: max-content;
+}
+
+.backArrowIcon { font-size: 16px; color: #4E5969; margin-right: 8px; }
+.navigationTitleText { font-size: 16px; font-weight: 600; color: #1D2129; }
+
+/* 基础卡片框架样式 */
+.ticketInfoSummaryCard,
+.ticketReplyWorkspaceCard {
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+  border: 1px solid #E5E6EB;
+}
+
+.marginTop16 { margin-top: 16px; }
+.cardInnerBlockTitle { font-size: 14px; font-weight: 600; color: #1D2129; margin-bottom: 20px; }
+
+/* 表单三列排版 */
+.threeColumnMetadataGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 40px;
+  margin-bottom: 24px;
+}
+
+.metaCell { font-size: 13px; display: flex; align-items: center; }
+.metaCell .lbl { color: #86909C; width: 75px; flex-shrink: 0; }
+.metaCell .val { color: #1D2129; }
+.fullWidthCell { grid-column: span 3; }
+.boldTitle { font-weight: 500; }
+
+/* 问题描述区块 */
+.problemDescriptionParagraphBox { border-top: 1px dashed #E5E6EB; padding-top: 16px; font-size: 13px; }
+.problemDescriptionParagraphBox .descLbl { color: #86909C; margin-bottom: 8px; }
+.problemDescriptionParagraphBox .descContentText { color: #1D2129; line-height: 1.6; }
+
+/* 工单状态标签规格 */
+.statusTagPillNode {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.statusDotInner { font-size: 8px; }
+.statusTransferWait { background-color: #F5EEFF; color: #722ED1; border: 1px solid #D3ADF7; }
+
+/* 回复区域样式排版 */
+.replyInputWrapper { display: flex; flex-direction: column; gap: 16px; }
+
+.replyBottomActionBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.btnPlainUpload {
+  background-color: #ffffff;
+  border: 1px solid #E5E6EB;
+  color: #4E5969;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btnPlainUpload:hover {
+  background-color: #FAFAFA;
+  border-color: #C9CDD4;
+  color: #4E5969;
+}
+
+.btnPrimarySubmitReply {
+  background-color: #1677FF;
+  border-color: #1677FF;
+  font-size: 14px;
+  padding: 8px 20px;
+  height: auto;
+}
+
+.btnPrimarySubmitReply:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+
+.iconMargin { margin-right: 4px; }
+.fontMono { font-family: Consolas, Monaco, monospace; }
+
+@media (max-width: 900px) {
+  .threeColumnMetadataGrid { grid-template-columns: 1fr; }
+  .fullWidthCell { grid-column: span 1; }
+}

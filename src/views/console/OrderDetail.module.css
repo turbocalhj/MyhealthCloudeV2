@@ -1,0 +1,289 @@
+.orderDetailPage {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: 24px;
+}
+
+.pageHeader h2 {
+  font-size: 20px;
+  color: #1d2129;
+  margin: 8px 0 4px;
+}
+
+.pageHeader p {
+  font-size: 14px;
+  color: #86909c;
+  margin: 0;
+}
+
+.backBtn {
+  border: none;
+  background: transparent;
+  color: #4e5969;
+  padding: 0;
+  font-size: 14px;
+}
+
+.backBtn:hover {
+  color: #1677ff;
+}
+
+.orderContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderCard {
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.statusBadge {
+  font-size: 14px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.statusPendingPay {
+  background-color: #fff7e8;
+  color: #faad14;
+}
+
+.statusPaid {
+  background-color: #e8f3ff;
+  color: #1677ff;
+}
+
+.statusProcessing {
+  background-color: #f3e8ff;
+  color: #722ed1;
+}
+
+.statusCompleted {
+  background-color: #e8ffe8;
+  color: #52c41a;
+}
+
+.statusCancelled {
+  background-color: #f0f0f0;
+  color: #999;
+}
+
+/* 状态时间线 */
+.statusTimeline {
+  display: flex;
+  gap: 0;
+  padding: 20px 0;
+}
+
+.timelineStep {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.timelineStep:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: #e5e6eb;
+  z-index: 0;
+}
+
+.timelineStep.completed:not(:last-child)::after {
+  background-color: #1677ff;
+}
+
+.stepDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #e5e6eb;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.timelineStep.active .stepDot {
+  background-color: #1677ff;
+  box-shadow: 0 0 0 4px rgba(22, 119, 255, 0.2);
+}
+
+.timelineStep.completed .stepDot {
+  background-color: #1677ff;
+}
+
+.stepLabel {
+  font-size: 14px;
+  color: #86909c;
+  margin-bottom: 4px;
+}
+
+.timelineStep.active .stepLabel,
+.timelineStep.completed .stepLabel {
+  color: #1d2129;
+  font-weight: 500;
+}
+
+.stepTime {
+  font-size: 12px;
+  color: #c0c4cc;
+}
+
+/* 订单商品 */
+.orderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1d2129;
+  margin-bottom: 4px;
+}
+
+.itemSpecs {
+  font-size: 13px;
+  color: #86909c;
+  margin-bottom: 8px;
+}
+
+.itemMeta {
+  display: flex;
+  gap: 8px;
+}
+
+.metaTag {
+  font-size: 12px;
+  padding: 2px 8px;
+  background: #e8f3ff;
+  color: #1677ff;
+  border-radius: 2px;
+}
+
+.metaSource {
+  font-size: 12px;
+  color: #86909c;
+}
+
+.itemRight {
+  text-align: right;
+}
+
+.itemQuantity {
+  font-size: 14px;
+  color: #86909c;
+  margin-bottom: 4px;
+}
+
+.itemPrice {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1d2129;
+}
+
+/* 订单信息 */
+.infoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  width: 100px;
+  font-size: 14px;
+  color: #86909c;
+}
+
+.infoValue {
+  flex: 1;
+  font-size: 14px;
+  color: #1d2129;
+}
+
+/* 订单金额 */
+.orderSummaryCard {
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.03);
+}
+
+.orderSummaryCard :global(.ant-card-body) {
+  padding: 20px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #4e5969;
+}
+
+.summaryRow.discount {
+  color: #f53f3f;
+}
+
+.summaryRow.total {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1d2129;
+}
+
+.totalPrice {
+  font-size: 20px;
+  color: #f53f3f;
+  font-weight: 600;
+}
+
+.summaryActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
