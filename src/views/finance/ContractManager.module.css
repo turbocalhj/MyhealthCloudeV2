@@ -1,0 +1,193 @@
+.standaloneContractDetailContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== 顶部导航条 ==================== */
+.financeDetailNavigationBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.backArrowClickableBtn {
+  font-size: 14px;
+  color: #4e5969;
+  cursor: pointer;
+  background: #e5e6eb;
+  padding: 4px 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contractHeadlineTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.statusBadgeFulfillment {
+  background-color: #e8f3ff;
+  color: #1677ff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* ==================== 元信息面板 ==================== */
+.contractMetadataInfobarPanel {
+  background-color: #f2f6fc;
+  border-radius: 4px;
+  padding: 14px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+  border: 1px solid #e5e6eb;
+}
+
+.metaCellItem {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+.metaCellItem .lbl {
+  color: #86909c;
+}
+
+.metaCellItem .val {
+  color: #1d2129;
+}
+
+/* ==================== Tab 导航条 ==================== */
+.contractTabsNavigationStrip {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #e5e6eb;
+  margin-top: 20px;
+  padding-left: 4px;
+}
+
+.stripItem {
+  font-size: 14px;
+  color: #4e5969;
+  padding-bottom: 10px;
+  cursor: pointer;
+  position: relative;
+}
+
+.stripItem.active {
+  color: #1677ff;
+  font-weight: 500;
+}
+
+.stripItem.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1677ff;
+}
+
+/* ==================== 内容卡片 ==================== */
+.whiteCardContentBlock {
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 20px;
+  border: 1px solid #e5e6eb;
+}
+
+.marginTop20 {
+  margin-top: 20px;
+}
+
+.blockInnerTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2129;
+  margin-bottom: 20px;
+}
+
+.quadGridPropertiesLayout {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 32px;
+}
+
+.gridCell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.gridCell .pLbl {
+  color: #86909c;
+}
+
+.gridCell .pVal {
+  color: #1d2129;
+  font-weight: 400;
+}
+
+.placeholderNullText {
+  font-size: 13px;
+  color: #86909c;
+}
+
+/* ==================== 附件 ==================== */
+.fileDownloadWrapperCapsule {
+  display: flex;
+  align-items: center;
+  background-color: #fafafa;
+  border: 1px solid #e5e6eb;
+  border-radius: 4px;
+  padding: 12px 16px;
+  gap: 16px;
+  max-width: 600px;
+}
+
+.fileDownloadWrapperCapsule :global(.anticon) {
+  color: #f5222d;
+}
+
+.fileMetadataInfoFlex {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.fileMainName {
+  font-size: 14px;
+  color: #1d2129;
+  font-weight: 500;
+}
+
+.fileSubInfo {
+  font-size: 12px;
+  color: #86909c;
+}
+
+.fontMono {
+  font-family: monospace;
+}
+
+@media (max-width: 1200px) {
+  .quadGridPropertiesLayout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .quadGridPropertiesLayout {
+    grid-template-columns: 1fr;
+  }
+}
